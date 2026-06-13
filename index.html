@@ -1,0 +1,1584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Insight Forge</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Hanken+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0d1411;
+  --bg2: #101a16;
+  --card-bg: rgba(22,34,28,0.72);
+  --card-border: rgba(198,149,92,0.20);
+  --ink: #F1E7D6;
+  --ink-dim: #BDB09A;
+  --copper: #C6955C;
+  --copper-lt: #E2B884;
+  --ember: #E8743B;
+  --ember-glow: #FF8A4C;
+  --forest: #2C5F5A;
+  --mauve: #9B7C8B;
+  --gold: #D8B968;
+  --serif: 'Cormorant Garamond', Georgia, serif;
+  --sans: 'Hanken Grotesk', system-ui, sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+  --danger: #a84232;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* HEADER */
+.app-header {
+  text-align: center;
+  padding: 32px 20px 16px;
+  position: relative;
+}
+.app-header h1 {
+  font-family: var(--serif);
+  font-size: 2.2rem;
+  font-weight: 600;
+  background: linear-gradient(135deg, var(--copper-lt), var(--ember-glow), var(--gold), var(--copper));
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 4s ease-in-out infinite;
+}
+.app-header p {
+  color: var(--ink-dim);
+  font-size: 0.85rem;
+  margin-top: 4px;
+  letter-spacing: 0.04em;
+}
+
+@keyframes shimmer {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* TABS */
+.tab-bar {
+  display: flex;
+  gap: 2px;
+  padding: 0 20px;
+  border-bottom: 1px solid var(--card-border);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.tab-btn {
+  background: none;
+  border: none;
+  color: var(--ink-dim);
+  font-family: var(--sans);
+  font-size: 0.82rem;
+  font-weight: 500;
+  padding: 12px 16px;
+  cursor: pointer;
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+  letter-spacing: 0.02em;
+}
+.tab-btn:hover { color: var(--ink); }
+.tab-btn.active {
+  color: var(--copper-lt);
+  border-bottom-color: var(--copper);
+}
+
+/* CONTENT */
+.tab-content { display: none; padding: 24px 20px 60px; max-width: 900px; margin: 0 auto; }
+.tab-content.active { display: block; }
+
+/* CARDS */
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 16px;
+  backdrop-filter: blur(16px);
+  position: relative;
+}
+.card-accent {
+  border-left: 3px solid transparent;
+  border-image: linear-gradient(to bottom, var(--copper), var(--ember), var(--gold)) 1;
+}
+
+/* SECTION HEADERS */
+.section-title {
+  font-family: var(--serif);
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--copper-lt);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.section-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to right, var(--card-border), transparent);
+}
+
+/* FORMS */
+label {
+  display: block;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-dim);
+  margin-bottom: 6px;
+  margin-top: 14px;
+}
+label:first-child { margin-top: 0; }
+
+input[type="text"], textarea, select {
+  width: 100%;
+  background: rgba(13,20,17,0.6);
+  border: 1px solid var(--card-border);
+  border-radius: 11px;
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 0.9rem;
+  padding: 10px 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+input:focus, textarea:focus, select:focus {
+  border-color: var(--copper);
+  box-shadow: 0 0 0 2px rgba(198,149,92,0.15);
+}
+textarea { resize: vertical; min-height: 80px; }
+select { cursor: pointer; }
+select option { background: var(--bg2); color: var(--ink); }
+
+/* BUTTONS */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--sans);
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 10px 20px;
+  border-radius: 30px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-primary {
+  background: linear-gradient(135deg, var(--copper), var(--ember));
+  color: #1a120a;
+}
+.btn-primary:hover { filter: brightness(1.1); transform: translateY(-1px); }
+.btn-secondary {
+  background: transparent;
+  border: 1px solid var(--copper);
+  color: var(--copper-lt);
+}
+.btn-secondary:hover { background: rgba(198,149,92,0.1); }
+.btn-small {
+  font-size: 0.75rem;
+  padding: 6px 14px;
+}
+.btn-danger {
+  background: transparent;
+  border: 1px solid var(--danger);
+  color: var(--danger);
+}
+.btn-danger:hover { background: rgba(168,66,50,0.15); }
+.btn-ghost {
+  background: none;
+  border: none;
+  color: var(--ink-dim);
+  padding: 4px 8px;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+.btn-ghost:hover { color: var(--copper-lt); }
+
+.btn-row { display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap; }
+
+/* TAGS */
+.tag {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 3px 10px;
+  border-radius: 30px;
+  border: 1px solid;
+}
+.tag-ember { border-color: var(--ember); color: var(--ember); }
+.tag-forest { border-color: var(--forest); color: var(--forest); }
+.tag-copper { border-color: var(--copper); color: var(--copper-lt); }
+.tag-mauve { border-color: var(--mauve); color: var(--mauve); }
+.tag-gold { border-color: var(--gold); color: var(--gold); }
+
+/* CHECKLIST */
+.checklist-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(198,149,92,0.08);
+}
+.checklist-item:last-child { border-bottom: none; }
+.checklist-item input[type="checkbox"] {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  min-width: 20px;
+  border: 2px solid var(--copper);
+  border-radius: 6px;
+  background: transparent;
+  cursor: pointer;
+  margin-top: 2px;
+  position: relative;
+}
+.checklist-item input[type="checkbox"]:checked {
+  background: var(--copper);
+}
+.checklist-item input[type="checkbox"]:checked::after {
+  content: '✓';
+  position: absolute;
+  top: -1px;
+  left: 3px;
+  color: #1a120a;
+  font-size: 14px;
+  font-weight: 700;
+}
+.checklist-label { font-size: 0.88rem; }
+.checklist-label.checked { text-decoration: line-through; color: var(--ink-dim); }
+
+/* COPY BUTTON */
+.prompt-block {
+  background: rgba(13,20,17,0.6);
+  border: 1px solid var(--card-border);
+  border-radius: 11px;
+  padding: 16px;
+  margin-bottom: 12px;
+  position: relative;
+}
+.prompt-block h4 {
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  color: var(--copper-lt);
+  margin-bottom: 8px;
+}
+.prompt-block p, .prompt-block .prompt-text {
+  font-size: 0.85rem;
+  color: var(--ink-dim);
+  white-space: pre-wrap;
+  line-height: 1.6;
+}
+.copy-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: rgba(198,149,92,0.15);
+  border: 1px solid var(--card-border);
+  color: var(--copper-lt);
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  padding: 4px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.copy-btn:hover { background: rgba(198,149,92,0.25); }
+
+/* FILTERS */
+.filter-bar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.filter-bar select {
+  width: auto;
+  min-width: 140px;
+  font-size: 0.82rem;
+  padding: 8px 12px;
+}
+.filter-bar input[type="text"] {
+  width: auto;
+  flex: 1;
+  min-width: 160px;
+  font-size: 0.82rem;
+  padding: 8px 12px;
+}
+
+/* CONCEPT/IDEA CARDS */
+.item-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-left: 3px solid transparent;
+  border-image: linear-gradient(to bottom, var(--copper), var(--ember), var(--gold)) 1;
+  border-radius: 0 16px 16px 0;
+  padding: 18px 20px;
+  margin-bottom: 10px;
+  backdrop-filter: blur(16px);
+}
+.item-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+.item-card-title {
+  font-family: var(--serif);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+.item-card-meta {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+.item-card-desc {
+  font-size: 0.85rem;
+  color: var(--ink-dim);
+  margin-top: 8px;
+}
+.item-card-story {
+  font-style: italic;
+  font-size: 0.82rem;
+  color: var(--mauve);
+  margin-top: 6px;
+  padding-left: 12px;
+  border-left: 2px solid var(--mauve);
+}
+.item-card-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 12px;
+}
+.idea-count {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--gold);
+}
+
+/* PIPELINE */
+.pipeline-stage {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.stage-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+.stage-not-started .stage-dot { background: var(--ink-dim); }
+.stage-outlined .stage-dot { background: var(--forest); }
+.stage-drafted .stage-dot { background: var(--gold); }
+.stage-published .stage-dot { background: var(--ember-glow); }
+
+/* MODAL */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.7);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.modal-overlay.active { display: flex; }
+.modal {
+  background: var(--bg2);
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  padding: 28px;
+  width: 100%;
+  max-width: 560px;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+.modal h3 {
+  font-family: var(--serif);
+  font-size: 1.3rem;
+  color: var(--copper-lt);
+  margin-bottom: 16px;
+}
+
+/* EMPTY STATE */
+.empty-state {
+  text-align: center;
+  padding: 48px 20px;
+  color: var(--ink-dim);
+}
+.empty-state p { font-size: 0.9rem; margin-bottom: 16px; }
+
+/* SETUP ITEMS */
+.setup-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: rgba(13,20,17,0.4);
+  border: 1px solid rgba(198,149,92,0.1);
+  border-radius: 11px;
+  margin-bottom: 6px;
+}
+.setup-item-name {
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+.setup-item-desc {
+  font-size: 0.78rem;
+  color: var(--ink-dim);
+  margin-top: 2px;
+}
+.setup-item-actions { display: flex; gap: 4px; }
+
+/* GUIDE CONTENT */
+.guide-step {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.guide-num {
+  font-family: var(--serif);
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--copper);
+  min-width: 32px;
+}
+.guide-text h4 {
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+.guide-text p {
+  font-size: 0.85rem;
+  color: var(--ink-dim);
+}
+
+/* TOAST */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: var(--copper);
+  color: #1a120a;
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 0.82rem;
+  padding: 10px 24px;
+  border-radius: 30px;
+  z-index: 2000;
+  transition: transform 0.3s ease;
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+/* RESPONSIVE */
+@media (max-width: 600px) {
+  .app-header h1 { font-size: 1.6rem; }
+  .tab-btn { font-size: 0.75rem; padding: 10px 12px; }
+  .tab-content { padding: 16px 14px 60px; }
+  .card { padding: 18px; }
+  .filter-bar { flex-direction: column; }
+  .filter-bar select, .filter-bar input[type="text"] { width: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-header h1 { animation: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="app-header">
+  <h1>The Insight Forge</h1>
+  <p>Distill your practice into IP</p>
+</div>
+
+<div class="tab-bar">
+  <button class="tab-btn active" data-tab="setup">Setup</button>
+  <button class="tab-btn" data-tab="guide">Guide</button>
+  <button class="tab-btn" data-tab="practice">Practice</button>
+  <button class="tab-btn" data-tab="prompts">Prompts</button>
+  <button class="tab-btn" data-tab="concepts">Concepts</button>
+  <button class="tab-btn" data-tab="ideas">Ideas</button>
+</div>
+
+<!-- ============ SETUP TAB ============ -->
+<div class="tab-content active" id="tab-setup">
+  <div class="section-title">Your Foundation</div>
+  <p style="color:var(--ink-dim);font-size:0.85rem;margin-bottom:20px;">
+    Define your frameworks, modalities, offer, and audience. These populate your prompt templates and concept tags throughout the tool.
+  </p>
+
+  <!-- Frameworks -->
+  <div class="card card-accent">
+    <h3 style="font-family:var(--serif);font-size:1.15rem;color:var(--copper-lt);margin-bottom:12px;">Your Frameworks</h3>
+    <p style="font-size:0.82rem;color:var(--ink-dim);margin-bottom:12px;">The named systems, models, or processes you teach. These become tagging options for your concepts.</p>
+    <div id="frameworks-list"></div>
+    <div style="margin-top:12px;">
+      <label>Framework Name</label>
+      <input type="text" id="fw-name" placeholder="e.g., Method Alchemy">
+      <label>Brief Description</label>
+      <input type="text" id="fw-desc" placeholder="e.g., Combining modalities into one signature method">
+      <div class="btn-row">
+        <button class="btn btn-primary btn-small" onclick="addFramework()">Add Framework</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modalities -->
+  <div class="card card-accent">
+    <h3 style="font-family:var(--serif);font-size:1.15rem;color:var(--copper-lt);margin-bottom:12px;">Your Modalities</h3>
+    <p style="font-size:0.82rem;color:var(--ink-dim);margin-bottom:12px;">The skills, tools, or disciplines you weave into your work.</p>
+    <div id="modalities-list"></div>
+    <div style="margin-top:12px;">
+      <label>Modality Name</label>
+      <input type="text" id="mod-name" placeholder="e.g., Tarot Reading">
+      <label>Type</label>
+      <select id="mod-type">
+        <option value="braided">Braided (woven throughout)</option>
+        <option value="sequenced">Sequenced (specific order)</option>
+        <option value="support">Support (enhances primary)</option>
+      </select>
+      <div class="btn-row">
+        <button class="btn btn-primary btn-small" onclick="addModality()">Add Modality</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Core Info -->
+  <div class="card card-accent">
+    <h3 style="font-family:var(--serif);font-size:1.15rem;color:var(--copper-lt);margin-bottom:12px;">Core Identity</h3>
+    <label>Core Offer</label>
+    <input type="text" id="core-offer" placeholder="Your primary offer or service" oninput="saveSetup()">
+    <label>Audience</label>
+    <input type="text" id="audience" placeholder="Who you serve" oninput="saveSetup()">
+    <label>Spark Statement</label>
+    <textarea id="spark-statement" placeholder="Your positioning statement: what you do, who you serve, how your method works" rows="3" oninput="saveSetup()"></textarea>
+  </div>
+
+  <div class="card" style="border-color:var(--forest);">
+    <h3 style="font-family:var(--serif);font-size:1.05rem;color:var(--forest);margin-bottom:8px;">Generate NotebookLM Instructions</h3>
+    <p style="font-size:0.82rem;color:var(--ink-dim);margin-bottom:12px;">Once your setup is complete, generate a customized instruction set for your NotebookLM notebook based on your frameworks and modalities.</p>
+    <button class="btn btn-secondary btn-small" onclick="generateNBLMInstructions()">Generate Instructions</button>
+  </div>
+</div>
+
+<!-- ============ GUIDE TAB ============ -->
+<div class="tab-content" id="tab-guide">
+  <div class="section-title">How the System Works</div>
+  
+  <div class="card card-accent">
+    <h3 style="font-family:var(--serif);font-size:1.15rem;color:var(--copper-lt);margin-bottom:16px;">The Insight Forge System</h3>
+    <p style="font-size:0.88rem;color:var(--ink-dim);margin-bottom:16px;">
+      You generate intellectual property every single day through your practice, your client calls, your reflections, and your teaching. Most of it disappears. This system captures it, distills it, and turns it into content and offers.
+    </p>
+    <p style="font-size:0.88rem;color:var(--ink-dim);">
+      The system has three layers: Capture (recording your insights), Distill (extracting the signal from the noise), and Create (turning distilled concepts into content, trainings, and offers).
+    </p>
+  </div>
+
+  <div class="section-title" style="margin-top:28px;">Daily Practice</div>
+  <div class="guide-step">
+    <div class="guide-num">1</div>
+    <div class="guide-text">
+      <h4>Do Your Practice</h4>
+      <p>Tarot reading, breathwork, coaching session, technique practice, client call. Whatever your daily practice looks like, do it with awareness that insights will surface.</p>
+    </div>
+  </div>
+  <div class="guide-step">
+    <div class="guide-num">2</div>
+    <div class="guide-text">
+      <h4>Record an Insight Loom</h4>
+      <p>Spend 5 to 10 minutes talking through the insight that emerged. What was it? What triggered it? How have you seen this show up before, in your own journey or with students? What is the practical application? What framework does it connect to? Drop the Loom link into your NotebookLM notebook.</p>
+    </div>
+  </div>
+  <div class="guide-step">
+    <div class="guide-num">3</div>
+    <div class="guide-text">
+      <h4>Log It Here</h4>
+      <p>If the insight feels significant, add it as a Concept in the Concepts tab. Tag the source, the connected framework, and its current readiness level. You can always come back and develop it further.</p>
+    </div>
+  </div>
+
+  <div class="section-title" style="margin-top:28px;">Weekly Distillation</div>
+  <div class="guide-step">
+    <div class="guide-num">1</div>
+    <div class="guide-text">
+      <h4>Load Your Sources</h4>
+      <p>Consolidate your daily Looms into one weekly Loom. Pull transcripts from any coaching or implementation calls. Drop them into your NotebookLM notebook.</p>
+    </div>
+  </div>
+  <div class="guide-step">
+    <div class="guide-num">2</div>
+    <div class="guide-text">
+      <h4>Run the Extraction Prompts</h4>
+      <p>Go to the Prompts tab and use the NotebookLM extraction prompts. Run them in order. Review the output.</p>
+    </div>
+  </div>
+  <div class="guide-step">
+    <div class="guide-num">3</div>
+    <div class="guide-text">
+      <h4>Process into Concepts and Ideas</h4>
+      <p>Take the most important findings and add them as Concepts and Ideas here. A concept is a theme or principle. An idea is a specific piece of content or action you could take.</p>
+    </div>
+  </div>
+  <div class="guide-step">
+    <div class="guide-num">4</div>
+    <div class="guide-text">
+      <h4>Create from Your Vault</h4>
+      <p>Use the Claude prompts to turn developed concepts into blog posts, social content, emails, trainings, or challenge material. Your vault feeds your content pipeline.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PRACTICE TAB ============ -->
+<div class="tab-content" id="tab-practice">
+  <div class="section-title">Daily Practice</div>
+  <div class="card card-accent">
+    <div id="daily-date" style="font-family:var(--mono);font-size:0.72rem;color:var(--ink-dim);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:12px;"></div>
+    <div id="daily-checklist"></div>
+    <div class="btn-row">
+      <button class="btn btn-secondary btn-small" onclick="resetDaily()">Reset Daily</button>
+    </div>
+  </div>
+
+  <div class="section-title" style="margin-top:28px;">Weekly Distillation</div>
+  <div class="card card-accent">
+    <div id="weekly-date" style="font-family:var(--mono);font-size:0.72rem;color:var(--ink-dim);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:12px;"></div>
+    <div id="weekly-checklist"></div>
+    <div class="btn-row">
+      <button class="btn btn-secondary btn-small" onclick="resetWeekly()">Reset Weekly</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PROMPTS TAB ============ -->
+<div class="tab-content" id="tab-prompts">
+  <div class="section-title">NotebookLM Extraction Prompts</div>
+  <p style="color:var(--ink-dim);font-size:0.85rem;margin-bottom:16px;">Run these in your NotebookLM notebook after loading weekly sources. Copy each prompt, paste it in, and review the output before moving on.</p>
+
+  <div class="prompt-block">
+    <button class="copy-btn" onclick="copyPrompt(this)">Copy</button>
+    <h4>Questions Asked</h4>
+    <div class="prompt-text">Review all call transcripts from this week. List every specific question a member asked or problem they brought to the call. For each one, include:
+- Who asked it (if identifiable)
+- The core question in their words
+- The underlying need behind the question (what they were really asking)
+- Which framework or concept it connects to</div>
+  </div>
+
+  <div class="prompt-block">
+    <button class="copy-btn" onclick="copyPrompt(this)">Copy</button>
+    <h4>IP Generated</h4>
+    <div class="prompt-text">What advice, frameworks, analogies, step-by-step processes, or solutions were taught or explained during these calls? Focus on anything that was spontaneous or said in the moment rather than pre-planned. Include:
+- The core idea or framework articulated
+- The context that prompted it
+- A brief direct quote if the exact wording was strong
+- Whether this is a refinement of an existing framework or something new
+Flag anything that could become a standalone training, blog post, or curriculum addition.</div>
+  </div>
+
+  <div class="prompt-block">
+    <button class="copy-btn" onclick="copyPrompt(this)">Copy</button>
+    <h4>Member Wins</h4>
+    <div class="prompt-text">Identify any breakthroughs, progress reports, celebrations, or aha moments that members shared during these calls. Note what specifically shifted for them and what it tells us about where the community is in their journey right now.</div>
+  </div>
+
+  <div class="prompt-block">
+    <button class="copy-btn" onclick="copyPrompt(this)">Copy</button>
+    <h4>Insight Loom Inventory</h4>
+    <div class="prompt-text">Review the insight Loom(s) from this week. For each distinct insight discussed, create an entry with:
+- The core insight in one sentence
+- What triggered it (which student, which situation, which call moment)
+- Any personal story connected to it
+- Which existing framework it relates to or extends
+- The practical application (how would this actually help a student)</div>
+  </div>
+
+  <div class="prompt-block">
+    <button class="copy-btn" onclick="copyPrompt(this)">Copy</button>
+    <h4>Weekly Patterns</h4>
+    <div class="prompt-text">Looking across ALL sources this week (calls AND insight Looms), what patterns do you see? Specifically:
+- What topics or themes came up more than once?
+- What are members collectively struggling with right now?
+- Are there any disconnects between what is being taught and what members are actually asking about?
+- What is the strongest content opportunity from this week?</div>
+  </div>
+
+  <div class="prompt-block">
+    <button class="copy-btn" onclick="copyPrompt(this)">Copy</button>
+    <h4>Offer Intelligence</h4>
+    <div class="prompt-text">Based on everything from this week, are there any signals about:
+- Support or resources members are asking for that do not currently exist?
+- Things members would likely pay for based on the urgency or frequency of their questions?
+- Topics that could become a mini course, workshop, or sprint offer?
+- Gaps in the current offerings that these conversations reveal?</div>
+  </div>
+
+  <div class="prompt-block">
+    <button class="copy-btn" onclick="copyPrompt(this)">Copy</button>
+    <h4>Search a Topic</h4>
+    <div class="prompt-text">Which Loom or call discussed [TOPIC]? Give me the source name, summarize what was said, and include any direct quotes that capture the core idea.</div>
+  </div>
+
+  <div class="section-title" style="margin-top:32px;">Claude Creation Prompts</div>
+  <p style="color:var(--ink-dim);font-size:0.85rem;margin-bottom:16px;">Use these to turn your distilled concepts into content. Fill in the brackets with details from your Concepts tab.</p>
+
+  <div class="prompt-block">
+    <button class="copy-btn" onclick="copyPrompt(this)">Copy</button>
+    <h4>Blog Post from Concept</h4>
+    <div class="prompt-text">I want to write a blog post based on this concept:
+
+Concept: [CONCEPT TITLE]
+Core insight: [WHAT THE CONCEPT IS ABOUT]
+Personal story: [YOUR EXPERIENCE WITH THIS]
+Student example: [HOW YOU HAVE SEEN THIS SHOW UP FOR STUDENTS]
+Framework connection: [WHICH OF YOUR FRAMEWORKS THIS RELATES TO]
+Audience: [WHO THIS IS FOR]
+
+Write this in my brand voice. The tone should feel like a conversation between equals, not a lecture from above. Use the personal story and student example to ground it. End with a practical takeaway they can apply today.</div>
+  </div>
+
+  <div class="prompt-block">
+    <button class="copy-btn" onclick="copyPrompt(this)">Copy</button>
+    <h4>Content Batch from Concept</h4>
+    <div class="prompt-text">I want to create a full content batch from this concept:
+
+Concept: [CONCEPT TITLE]
+Core insight: [WHAT THE CONCEPT IS ABOUT]
+Personal story: [YOUR EXPERIENCE WITH THIS]
+Student example: [HOW YOU HAVE SEEN THIS SHOW UP]
+Framework connection: [WHICH FRAMEWORK THIS RELATES TO]
+
+Create:
+1. A blog post (600-800 words)
+2. An email blast version (shorter, more personal, includes a CTA)
+3. Five social media captions for the concept (follow my brand caption SOP)</div>
+  </div>
+
+  <div class="prompt-block">
+    <button class="copy-btn" onclick="copyPrompt(this)">Copy</button>
+    <h4>Training Outline from Concept</h4>
+    <div class="prompt-text">I want to turn this concept into a training for my community:
+
+Concept: [CONCEPT TITLE]
+Core insight: [WHAT THE CONCEPT IS ABOUT]
+Why it matters: [WHY THIS IS IMPORTANT FOR PRACTITIONERS]
+Framework connection: [WHICH FRAMEWORK THIS RELATES TO]
+Examples: [STUDENT EXAMPLES OR YOUR OWN EXPERIENCE]
+
+Create a training outline that includes:
+- A compelling title
+- The key teaching points (3-5)
+- An interactive or reflective exercise
+- A practical action step they can take immediately after</div>
+  </div>
+
+  <div class="prompt-block">
+    <button class="copy-btn" onclick="copyPrompt(this)">Copy</button>
+    <h4>Offer Idea Development</h4>
+    <div class="prompt-text">I have been noticing a pattern in my community that suggests an offer opportunity:
+
+The pattern: [WHAT YOU HAVE BEEN SEEING]
+Questions being asked: [SPECIFIC QUESTIONS RELATED TO THIS]
+Current gap: [WHAT IS MISSING FROM YOUR CURRENT OFFERINGS]
+Framework connection: [WHICH FRAMEWORK THIS RELATES TO]
+
+Help me explore what this offer could look like:
+- What would the transformation be?
+- What format fits (course, sprint, workshop, template, toolkit)?
+- What price point makes sense based on the depth?
+- What is the most compelling way to name and position it?</div>
+  </div>
+</div>
+
+<!-- ============ CONCEPTS TAB ============ -->
+<div class="tab-content" id="tab-concepts">
+  <div class="section-title">Concept Vault</div>
+  
+  <div class="filter-bar">
+    <input type="text" id="concept-search" placeholder="Search concepts..." oninput="renderConcepts()">
+    <select id="concept-filter-source" onchange="renderConcepts()">
+      <option value="">All Sources</option>
+      <option value="call">Call</option>
+      <option value="reflection">Reflection</option>
+      <option value="pattern">Pattern</option>
+      <option value="student-question">Student Question</option>
+    </select>
+    <select id="concept-filter-readiness" onchange="renderConcepts()">
+      <option value="">All Readiness</option>
+      <option value="percolating">Percolating</option>
+      <option value="developing">Developing</option>
+      <option value="fully-formed">Fully Formed</option>
+    </select>
+    <select id="concept-filter-framework" onchange="renderConcepts()"></select>
+    <button class="btn btn-primary btn-small" onclick="openConceptModal()">+ New Concept</button>
+  </div>
+
+  <div id="concepts-list"></div>
+</div>
+
+<!-- ============ IDEAS TAB ============ -->
+<div class="tab-content" id="tab-ideas">
+  <div class="section-title">Idea Pipeline</div>
+  
+  <div class="filter-bar">
+    <input type="text" id="idea-search" placeholder="Search ideas..." oninput="renderIdeas()">
+    <select id="idea-filter-concept" onchange="renderIdeas()"></select>
+    <select id="idea-filter-type" onchange="renderIdeas()">
+      <option value="">All Types</option>
+      <option value="blog">Blog</option>
+      <option value="social">Social</option>
+      <option value="email">Email</option>
+      <option value="training">Training</option>
+      <option value="challenge">Challenge</option>
+      <option value="offer">Offer</option>
+      <option value="other">Other</option>
+    </select>
+    <select id="idea-filter-stage" onchange="renderIdeas()">
+      <option value="">All Stages</option>
+      <option value="not-started">Not Started</option>
+      <option value="outlined">Outlined</option>
+      <option value="drafted">Drafted</option>
+      <option value="published">Published</option>
+    </select>
+    <label style="display:inline-flex;align-items:center;gap:6px;margin:0;font-size:0.78rem;">
+      <input type="checkbox" id="idea-show-archived" onchange="renderIdeas()" style="width:auto;min-width:auto;appearance:auto;border:none;margin:0;">
+      Show Archived
+    </label>
+    <button class="btn btn-primary btn-small" onclick="openIdeaModal()">+ New Idea</button>
+  </div>
+
+  <div id="ideas-list"></div>
+</div>
+
+<!-- ============ CONCEPT MODAL ============ -->
+<div class="modal-overlay" id="concept-modal">
+  <div class="modal">
+    <h3 id="concept-modal-title">New Concept</h3>
+    <input type="hidden" id="concept-edit-id">
+    <label>Concept Title</label>
+    <input type="text" id="c-title" placeholder="The big theme or principle">
+    <label>Description</label>
+    <textarea id="c-desc" placeholder="What is this concept about?" rows="3"></textarea>
+    <label>Source</label>
+    <select id="c-source">
+      <option value="call">Call</option>
+      <option value="reflection">Reflection</option>
+      <option value="pattern">Pattern</option>
+      <option value="student-question">Student Question</option>
+    </select>
+    <label>Connected Framework</label>
+    <select id="c-framework"></select>
+    <label>Personal Story</label>
+    <textarea id="c-story" placeholder="How have you experienced this yourself?" rows="2"></textarea>
+    <label>Readiness</label>
+    <select id="c-readiness">
+      <option value="percolating">Percolating (still forming)</option>
+      <option value="developing">Developing (getting clearer)</option>
+      <option value="fully-formed">Fully Formed (ready to create from)</option>
+    </select>
+    <label>Timing</label>
+    <select id="c-timing">
+      <option value="evergreen">Evergreen</option>
+      <option value="spring">Spring</option>
+      <option value="summer">Summer</option>
+      <option value="fall">Fall</option>
+      <option value="winter">Winter</option>
+    </select>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="saveConcept()">Save Concept</button>
+      <button class="btn btn-secondary" onclick="closeModal('concept-modal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ IDEA MODAL ============ -->
+<div class="modal-overlay" id="idea-modal">
+  <div class="modal">
+    <h3 id="idea-modal-title">New Idea</h3>
+    <input type="hidden" id="idea-edit-id">
+    <label>Idea Title</label>
+    <input type="text" id="i-title" placeholder="The specific thing to create or do">
+    <label>Description</label>
+    <textarea id="i-desc" placeholder="Details about this idea" rows="3"></textarea>
+    <label>Parent Concept</label>
+    <select id="i-concept"></select>
+    <label>Content Type</label>
+    <select id="i-type">
+      <option value="blog">Blog Post</option>
+      <option value="social">Social Content</option>
+      <option value="email">Email</option>
+      <option value="training">Training / Workshop</option>
+      <option value="challenge">Challenge Content</option>
+      <option value="offer">New Offer</option>
+      <option value="other">Other</option>
+    </select>
+    <label>Pipeline Stage</label>
+    <select id="i-stage">
+      <option value="not-started">Not Started</option>
+      <option value="outlined">Outlined</option>
+      <option value="drafted">Drafted</option>
+      <option value="published">Published</option>
+    </select>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="saveIdea()">Save Idea</button>
+      <button class="btn btn-secondary" onclick="closeModal('idea-modal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ NBLM MODAL ============ -->
+<div class="modal-overlay" id="nblm-modal">
+  <div class="modal">
+    <h3>Your NotebookLM Instructions</h3>
+    <p style="font-size:0.82rem;color:var(--ink-dim);margin-bottom:12px;">Copy this and paste it into your NotebookLM Custom Instructions field, or save it as a text file and upload it as a source.</p>
+    <textarea id="nblm-output" rows="16" style="font-size:0.8rem;line-height:1.5;" readonly></textarea>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="copyNBLM()">Copy to Clipboard</button>
+      <button class="btn btn-secondary" onclick="closeModal('nblm-modal')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ============ DATA ============
+const STORAGE_KEY = 'insight-forge-data';
+
+const defaultData = {
+  setup: {
+    frameworks: [],
+    modalities: [],
+    coreOffer: '',
+    audience: '',
+    sparkStatement: ''
+  },
+  concepts: [],
+  ideas: [],
+  dailyChecklist: { date: '', items: [false,false,false,false] },
+  weeklyChecklist: { weekOf: '', items: [false,false,false,false,false,false] }
+};
+
+let data = loadData();
+
+function loadData() {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      return { ...defaultData, ...parsed };
+    }
+  } catch(e) {}
+  return JSON.parse(JSON.stringify(defaultData));
+}
+
+function saveData() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+function genId() {
+  return Date.now().toString(36) + Math.random().toString(36).substr(2,5);
+}
+
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+// ============ TABS ============
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+    if (btn.dataset.tab === 'concepts') renderConcepts();
+    if (btn.dataset.tab === 'ideas') renderIdeas();
+    if (btn.dataset.tab === 'practice') renderChecklists();
+  });
+});
+
+// ============ SETUP ============
+function addFramework() {
+  const name = document.getElementById('fw-name').value.trim();
+  const desc = document.getElementById('fw-desc').value.trim();
+  if (!name) return toast('Enter a framework name');
+  data.setup.frameworks.push({ id: genId(), name, description: desc });
+  document.getElementById('fw-name').value = '';
+  document.getElementById('fw-desc').value = '';
+  saveData();
+  renderFrameworks();
+  toast('Framework added');
+}
+
+function removeFramework(id) {
+  data.setup.frameworks = data.setup.frameworks.filter(f => f.id !== id);
+  saveData();
+  renderFrameworks();
+}
+
+function renderFrameworks() {
+  const el = document.getElementById('frameworks-list');
+  if (!data.setup.frameworks.length) {
+    el.innerHTML = '<p style="font-size:0.82rem;color:var(--ink-dim);font-style:italic;">No frameworks added yet</p>';
+    return;
+  }
+  el.innerHTML = data.setup.frameworks.map(f => `
+    <div class="setup-item">
+      <div>
+        <div class="setup-item-name">${esc(f.name)}</div>
+        ${f.description ? `<div class="setup-item-desc">${esc(f.description)}</div>` : ''}
+      </div>
+      <div class="setup-item-actions">
+        <button class="btn-ghost" onclick="removeFramework('${f.id}')" title="Remove">✕</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function addModality() {
+  const name = document.getElementById('mod-name').value.trim();
+  const type = document.getElementById('mod-type').value;
+  if (!name) return toast('Enter a modality name');
+  data.setup.modalities.push({ id: genId(), name, type });
+  document.getElementById('mod-name').value = '';
+  saveData();
+  renderModalities();
+  toast('Modality added');
+}
+
+function removeModality(id) {
+  data.setup.modalities = data.setup.modalities.filter(m => m.id !== id);
+  saveData();
+  renderModalities();
+}
+
+function renderModalities() {
+  const el = document.getElementById('modalities-list');
+  if (!data.setup.modalities.length) {
+    el.innerHTML = '<p style="font-size:0.82rem;color:var(--ink-dim);font-style:italic;">No modalities added yet</p>';
+    return;
+  }
+  const typeLabels = { braided: 'Braided', sequenced: 'Sequenced', support: 'Support' };
+  const typeColors = { braided: 'tag-ember', sequenced: 'tag-forest', support: 'tag-mauve' };
+  el.innerHTML = data.setup.modalities.map(m => `
+    <div class="setup-item">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span class="setup-item-name">${esc(m.name)}</span>
+        <span class="tag ${typeColors[m.type]}">${typeLabels[m.type]}</span>
+      </div>
+      <div class="setup-item-actions">
+        <button class="btn-ghost" onclick="removeModality('${m.id}')" title="Remove">✕</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function saveSetup() {
+  data.setup.coreOffer = document.getElementById('core-offer').value;
+  data.setup.audience = document.getElementById('audience').value;
+  data.setup.sparkStatement = document.getElementById('spark-statement').value;
+  saveData();
+}
+
+function loadSetupFields() {
+  document.getElementById('core-offer').value = data.setup.coreOffer || '';
+  document.getElementById('audience').value = data.setup.audience || '';
+  document.getElementById('spark-statement').value = data.setup.sparkStatement || '';
+}
+
+// ============ NBLM INSTRUCTIONS ============
+function generateNBLMInstructions() {
+  const s = data.setup;
+  let text = 'WHO I AM\n\n';
+  text += `I am a practitioner and educator serving ${s.audience || '[your audience]'}. My core offer is ${s.coreOffer || '[your core offer]'}.`;
+  if (s.sparkStatement) text += ` ${s.sparkStatement}`;
+  text += '\n\n';
+
+  if (s.frameworks.length) {
+    text += 'MY CORE FRAMEWORKS\n\nRecognize and tag references to these when analyzing calls:\n\n';
+    s.frameworks.forEach(f => {
+      text += `${f.name}${f.description ? ' — ' + f.description : ''}\n\n`;
+    });
+  }
+
+  if (s.modalities.length) {
+    text += 'MY MODALITIES\n\n';
+    const types = { braided: 'Braided', sequenced: 'Sequenced', support: 'Support' };
+    s.modalities.forEach(m => {
+      text += `${m.name} (${types[m.type]})\n`;
+    });
+    text += '\n';
+  }
+
+  text += `WHAT TO EXTRACT FROM THESE SOURCES
+
+When I ask you to analyze call transcripts or insight recordings, organize findings into these categories:
+
+1. QUESTIONS ASKED — Specific questions asked or problems brought up. Include who asked if identifiable, the core question, the underlying need, and which framework it connects to.
+
+2. PROBLEMS SURFACED — Struggles, frustrations, blocks, or challenges mentioned. What are people stuck on?
+
+3. IP GENERATED — Advice, frameworks, solutions, analogies, or processes taught or explained. Focus on spontaneous insights. Flag anything that could become a standalone training, blog post, or framework refinement.
+
+4. PATTERNS — Themes across multiple questions or people. What does the community collectively need right now?
+
+5. CONTENT SEEDS — Based on questions and problems, what content could address these needs?
+
+6. OFFER INTELLIGENCE — Signals about what people would pay for, what support they need, or gaps in current offerings.
+
+7. WINS — Breakthroughs, progress, celebrations, or aha moments.
+
+8. FRAMEWORK REFINEMENTS — Moments where an existing framework was refined, expanded, or clarified.
+
+OUTPUT FORMAT
+
+Use clear headers for each category. Bullet points within each. Include brief direct quotes only when the exact wording captures something important. Begin any bullet that represents a potential action with [ACTION].`;
+
+  document.getElementById('nblm-output').value = text;
+  document.getElementById('nblm-modal').classList.add('active');
+}
+
+function copyNBLM() {
+  const text = document.getElementById('nblm-output').value;
+  navigator.clipboard.writeText(text).then(() => toast('Copied to clipboard'));
+}
+
+// ============ CHECKLISTS ============
+const dailyItems = [
+  'Did my practice (tarot, coaching, breathwork, technique, etc.)',
+  'Noticed and noted the key insight from today\'s practice',
+  'Recorded a 5-10 minute Insight Loom unpacking the insight',
+  'Dropped the Loom link into NotebookLM'
+];
+const weeklyItems = [
+  'Consolidated daily Insight Looms into one weekly Loom',
+  'Pulled transcripts from this week\'s calls',
+  'Loaded all sources into NotebookLM',
+  'Ran the extraction prompts (Questions, IP, Wins, Patterns)',
+  'Added new Concepts and Ideas to The Insight Forge',
+  'Reviewed Idea Pipeline and updated stages'
+];
+
+function renderChecklists() {
+  const today = new Date().toISOString().split('T')[0];
+  if (data.dailyChecklist.date !== today) {
+    data.dailyChecklist = { date: today, items: dailyItems.map(() => false) };
+    saveData();
+  }
+  const weekStart = getWeekStart();
+  if (data.weeklyChecklist.weekOf !== weekStart) {
+    data.weeklyChecklist = { weekOf: weekStart, items: weeklyItems.map(() => false) };
+    saveData();
+  }
+
+  document.getElementById('daily-date').textContent = formatDate(today);
+  document.getElementById('daily-checklist').innerHTML = dailyItems.map((item, i) => `
+    <div class="checklist-item">
+      <input type="checkbox" ${data.dailyChecklist.items[i] ? 'checked' : ''} onchange="toggleDaily(${i})">
+      <span class="checklist-label ${data.dailyChecklist.items[i] ? 'checked' : ''}">${item}</span>
+    </div>
+  `).join('');
+
+  document.getElementById('weekly-date').textContent = 'Week of ' + formatDate(weekStart);
+  document.getElementById('weekly-checklist').innerHTML = weeklyItems.map((item, i) => `
+    <div class="checklist-item">
+      <input type="checkbox" ${data.weeklyChecklist.items[i] ? 'checked' : ''} onchange="toggleWeekly(${i})">
+      <span class="checklist-label ${data.weeklyChecklist.items[i] ? 'checked' : ''}">${item}</span>
+    </div>
+  `).join('');
+}
+
+function toggleDaily(i) {
+  data.dailyChecklist.items[i] = !data.dailyChecklist.items[i];
+  saveData();
+  renderChecklists();
+}
+function toggleWeekly(i) {
+  data.weeklyChecklist.items[i] = !data.weeklyChecklist.items[i];
+  saveData();
+  renderChecklists();
+}
+function resetDaily() {
+  data.dailyChecklist.items = dailyItems.map(() => false);
+  saveData();
+  renderChecklists();
+  toast('Daily checklist reset');
+}
+function resetWeekly() {
+  data.weeklyChecklist.items = weeklyItems.map(() => false);
+  saveData();
+  renderChecklists();
+  toast('Weekly checklist reset');
+}
+
+function getWeekStart() {
+  const d = new Date();
+  const day = d.getDay();
+  const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+  const monday = new Date(d.setDate(diff));
+  return monday.toISOString().split('T')[0];
+}
+function formatDate(dateStr) {
+  return new Date(dateStr + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+}
+
+// ============ CONCEPTS ============
+function openConceptModal(id) {
+  const modal = document.getElementById('concept-modal');
+  const title = document.getElementById('concept-modal-title');
+  populateFrameworkSelect('c-framework', true);
+  
+  if (id) {
+    const c = data.concepts.find(x => x.id === id);
+    if (!c) return;
+    title.textContent = 'Edit Concept';
+    document.getElementById('concept-edit-id').value = id;
+    document.getElementById('c-title').value = c.title;
+    document.getElementById('c-desc').value = c.description;
+    document.getElementById('c-source').value = c.source;
+    document.getElementById('c-framework').value = c.frameworkId || '';
+    document.getElementById('c-story').value = c.personalStory || '';
+    document.getElementById('c-readiness').value = c.readiness;
+    document.getElementById('c-timing').value = c.timing;
+  } else {
+    title.textContent = 'New Concept';
+    document.getElementById('concept-edit-id').value = '';
+    document.getElementById('c-title').value = '';
+    document.getElementById('c-desc').value = '';
+    document.getElementById('c-source').value = 'reflection';
+    document.getElementById('c-framework').value = '';
+    document.getElementById('c-story').value = '';
+    document.getElementById('c-readiness').value = 'percolating';
+    document.getElementById('c-timing').value = 'evergreen';
+  }
+  modal.classList.add('active');
+}
+
+function saveConcept() {
+  const title = document.getElementById('c-title').value.trim();
+  if (!title) return toast('Enter a concept title');
+  
+  const editId = document.getElementById('concept-edit-id').value;
+  const conceptData = {
+    title,
+    description: document.getElementById('c-desc').value.trim(),
+    source: document.getElementById('c-source').value,
+    frameworkId: document.getElementById('c-framework').value,
+    personalStory: document.getElementById('c-story').value.trim(),
+    readiness: document.getElementById('c-readiness').value,
+    timing: document.getElementById('c-timing').value
+  };
+
+  if (editId) {
+    const idx = data.concepts.findIndex(c => c.id === editId);
+    if (idx >= 0) data.concepts[idx] = { ...data.concepts[idx], ...conceptData };
+  } else {
+    data.concepts.unshift({ id: genId(), ...conceptData, dateAdded: new Date().toISOString() });
+  }
+  
+  saveData();
+  closeModal('concept-modal');
+  renderConcepts();
+  toast(editId ? 'Concept updated' : 'Concept added');
+}
+
+function deleteConcept(id) {
+  if (!confirm('Delete this concept? Ideas linked to it will become unlinked.')) return;
+  data.concepts = data.concepts.filter(c => c.id !== id);
+  data.ideas.forEach(i => { if (i.conceptId === id) i.conceptId = ''; });
+  saveData();
+  renderConcepts();
+  toast('Concept deleted');
+}
+
+function renderConcepts() {
+  const search = document.getElementById('concept-search').value.toLowerCase();
+  const sourceFilter = document.getElementById('concept-filter-source').value;
+  const readinessFilter = document.getElementById('concept-filter-readiness').value;
+  const fwFilter = document.getElementById('concept-filter-framework').value;
+  
+  populateFrameworkSelect('concept-filter-framework', true, fwFilter);
+
+  let filtered = data.concepts.filter(c => {
+    if (search && !c.title.toLowerCase().includes(search) && !c.description.toLowerCase().includes(search)) return false;
+    if (sourceFilter && c.source !== sourceFilter) return false;
+    if (readinessFilter && c.readiness !== readinessFilter) return false;
+    if (fwFilter && c.frameworkId !== fwFilter) return false;
+    return true;
+  });
+
+  const list = document.getElementById('concepts-list');
+  if (!filtered.length) {
+    list.innerHTML = `<div class="empty-state"><p>${data.concepts.length ? 'No concepts match your filters.' : 'No concepts yet. Start capturing insights from your practice.'}</p>
+    ${!data.concepts.length ? '<button class="btn btn-primary" onclick="openConceptModal()">+ Add Your First Concept</button>' : ''}</div>`;
+    return;
+  }
+
+  const sourceLabels = { call: 'Call', reflection: 'Reflection', pattern: 'Pattern', 'student-question': 'Student Q' };
+  const sourceColors = { call: 'tag-ember', reflection: 'tag-gold', pattern: 'tag-forest', 'student-question': 'tag-mauve' };
+  const readinessLabels = { percolating: 'Percolating', developing: 'Developing', 'fully-formed': 'Fully Formed' };
+  const readinessColors = { percolating: 'tag-mauve', developing: 'tag-gold', 'fully-formed': 'tag-ember' };
+
+  list.innerHTML = filtered.map(c => {
+    const fw = data.setup.frameworks.find(f => f.id === c.frameworkId);
+    const ideaCount = data.ideas.filter(i => i.conceptId === c.id && !i.archived).length;
+    return `
+    <div class="item-card">
+      <div class="item-card-header">
+        <div>
+          <div class="item-card-title">${esc(c.title)}</div>
+          <div class="item-card-meta">
+            <span class="tag ${sourceColors[c.source]}">${sourceLabels[c.source]}</span>
+            <span class="tag ${readinessColors[c.readiness]}">${readinessLabels[c.readiness]}</span>
+            ${c.timing !== 'evergreen' ? `<span class="tag tag-copper">${c.timing}</span>` : ''}
+            ${fw ? `<span class="tag tag-forest">${esc(fw.name)}</span>` : ''}
+          </div>
+        </div>
+        ${ideaCount ? `<span class="idea-count">${ideaCount} idea${ideaCount > 1 ? 's' : ''}</span>` : ''}
+      </div>
+      ${c.description ? `<div class="item-card-desc">${esc(c.description)}</div>` : ''}
+      ${c.personalStory ? `<div class="item-card-story">${esc(c.personalStory)}</div>` : ''}
+      <div class="item-card-actions">
+        <button class="btn btn-secondary btn-small" onclick="openConceptModal('${c.id}')">Edit</button>
+        <button class="btn btn-secondary btn-small" onclick="openIdeaModal(null,'${c.id}')">+ Idea</button>
+        <button class="btn btn-danger btn-small" onclick="deleteConcept('${c.id}')">Delete</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ============ IDEAS ============
+function openIdeaModal(id, presetConceptId) {
+  const modal = document.getElementById('idea-modal');
+  const title = document.getElementById('idea-modal-title');
+  populateConceptSelect('i-concept', true);
+  
+  if (id) {
+    const idea = data.ideas.find(x => x.id === id);
+    if (!idea) return;
+    title.textContent = 'Edit Idea';
+    document.getElementById('idea-edit-id').value = id;
+    document.getElementById('i-title').value = idea.title;
+    document.getElementById('i-desc').value = idea.description || '';
+    document.getElementById('i-concept').value = idea.conceptId || '';
+    document.getElementById('i-type').value = idea.contentType;
+    document.getElementById('i-stage').value = idea.stage;
+  } else {
+    title.textContent = 'New Idea';
+    document.getElementById('idea-edit-id').value = '';
+    document.getElementById('i-title').value = '';
+    document.getElementById('i-desc').value = '';
+    document.getElementById('i-concept').value = presetConceptId || '';
+    document.getElementById('i-type').value = 'blog';
+    document.getElementById('i-stage').value = 'not-started';
+  }
+  modal.classList.add('active');
+}
+
+function saveIdea() {
+  const title = document.getElementById('i-title').value.trim();
+  if (!title) return toast('Enter an idea title');
+  
+  const editId = document.getElementById('idea-edit-id').value;
+  const ideaData = {
+    title,
+    description: document.getElementById('i-desc').value.trim(),
+    conceptId: document.getElementById('i-concept').value,
+    contentType: document.getElementById('i-type').value,
+    stage: document.getElementById('i-stage').value
+  };
+
+  if (editId) {
+    const idx = data.ideas.findIndex(i => i.id === editId);
+    if (idx >= 0) {
+      const wasPublished = data.ideas[idx].stage === 'published';
+      data.ideas[idx] = { ...data.ideas[idx], ...ideaData };
+      if (!wasPublished && ideaData.stage === 'published') {
+        data.ideas[idx].dateCompleted = new Date().toISOString();
+      }
+    }
+  } else {
+    data.ideas.unshift({ id: genId(), ...ideaData, archived: false, dateAdded: new Date().toISOString(), dateCompleted: null });
+  }
+  
+  saveData();
+  closeModal('idea-modal');
+  renderIdeas();
+  toast(editId ? 'Idea updated' : 'Idea added');
+}
+
+function archiveIdea(id) {
+  const idea = data.ideas.find(i => i.id === id);
+  if (idea) {
+    idea.archived = !idea.archived;
+    saveData();
+    renderIdeas();
+    toast(idea.archived ? 'Idea archived' : 'Idea restored');
+  }
+}
+
+function deleteIdea(id) {
+  if (!confirm('Delete this idea?')) return;
+  data.ideas = data.ideas.filter(i => i.id !== id);
+  saveData();
+  renderIdeas();
+  toast('Idea deleted');
+}
+
+function advanceStage(id) {
+  const idea = data.ideas.find(i => i.id === id);
+  if (!idea) return;
+  const stages = ['not-started', 'outlined', 'drafted', 'published'];
+  const idx = stages.indexOf(idea.stage);
+  if (idx < stages.length - 1) {
+    idea.stage = stages[idx + 1];
+    if (idea.stage === 'published') idea.dateCompleted = new Date().toISOString();
+    saveData();
+    renderIdeas();
+    toast('Stage advanced');
+  }
+}
+
+function renderIdeas() {
+  const search = document.getElementById('idea-search').value.toLowerCase();
+  const conceptFilter = document.getElementById('idea-filter-concept').value;
+  const typeFilter = document.getElementById('idea-filter-type').value;
+  const stageFilter = document.getElementById('idea-filter-stage').value;
+  const showArchived = document.getElementById('idea-show-archived').checked;
+
+  populateConceptSelect('idea-filter-concept', true, conceptFilter);
+
+  let filtered = data.ideas.filter(i => {
+    if (!showArchived && i.archived) return false;
+    if (search && !i.title.toLowerCase().includes(search) && !(i.description || '').toLowerCase().includes(search)) return false;
+    if (conceptFilter && i.conceptId !== conceptFilter) return false;
+    if (typeFilter && i.contentType !== typeFilter) return false;
+    if (stageFilter && i.stage !== stageFilter) return false;
+    return true;
+  });
+
+  const list = document.getElementById('ideas-list');
+  if (!filtered.length) {
+    list.innerHTML = `<div class="empty-state"><p>${data.ideas.length ? 'No ideas match your filters.' : 'No ideas yet. Add ideas from your concepts or start fresh.'}</p>
+    ${!data.ideas.length ? '<button class="btn btn-primary" onclick="openIdeaModal()">+ Add Your First Idea</button>' : ''}</div>`;
+    return;
+  }
+
+  const typeLabels = { blog: 'Blog', social: 'Social', email: 'Email', training: 'Training', challenge: 'Challenge', offer: 'Offer', other: 'Other' };
+  const stageLabels = { 'not-started': 'Not Started', outlined: 'Outlined', drafted: 'Drafted', published: 'Published' };
+  const stages = ['not-started', 'outlined', 'drafted', 'published'];
+
+  list.innerHTML = filtered.map(i => {
+    const concept = data.concepts.find(c => c.id === i.conceptId);
+    const canAdvance = stages.indexOf(i.stage) < stages.length - 1;
+    return `
+    <div class="item-card" style="${i.archived ? 'opacity:0.5;' : ''}">
+      <div class="item-card-header">
+        <div>
+          <div class="item-card-title">${esc(i.title)}</div>
+          <div class="item-card-meta">
+            <span class="tag tag-copper">${typeLabels[i.contentType]}</span>
+            <span class="pipeline-stage stage-${i.stage}"><span class="stage-dot"></span> ${stageLabels[i.stage]}</span>
+            ${concept ? `<span style="font-size:0.72rem;color:var(--ink-dim);">← ${esc(concept.title)}</span>` : ''}
+          </div>
+        </div>
+      </div>
+      ${i.description ? `<div class="item-card-desc">${esc(i.description)}</div>` : ''}
+      <div class="item-card-actions">
+        <button class="btn btn-secondary btn-small" onclick="openIdeaModal('${i.id}')">Edit</button>
+        ${canAdvance && !i.archived ? `<button class="btn btn-primary btn-small" onclick="advanceStage('${i.id}')">Advance →</button>` : ''}
+        <button class="btn btn-secondary btn-small" onclick="archiveIdea('${i.id}')">${i.archived ? 'Restore' : 'Archive'}</button>
+        <button class="btn btn-danger btn-small" onclick="deleteIdea('${i.id}')">Delete</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ============ HELPERS ============
+function populateFrameworkSelect(selectId, includeAll, currentVal) {
+  const sel = document.getElementById(selectId);
+  const val = currentVal !== undefined ? currentVal : sel.value;
+  let html = includeAll ? '<option value="">All Frameworks</option>' : '';
+  data.setup.frameworks.forEach(f => {
+    html += `<option value="${f.id}" ${val === f.id ? 'selected' : ''}>${esc(f.name)}</option>`;
+  });
+  sel.innerHTML = html;
+}
+
+function populateConceptSelect(selectId, includeAll, currentVal) {
+  const sel = document.getElementById(selectId);
+  const val = currentVal !== undefined ? currentVal : sel.value;
+  let html = includeAll ? '<option value="">All Concepts</option>' : '<option value="">No parent concept</option>';
+  data.concepts.forEach(c => {
+    html += `<option value="${c.id}" ${val === c.id ? 'selected' : ''}>${esc(c.title)}</option>`;
+  });
+  sel.innerHTML = html;
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('active');
+}
+
+function copyPrompt(btn) {
+  const block = btn.closest('.prompt-block');
+  const text = block.querySelector('.prompt-text').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = 'Copied';
+    setTimeout(() => btn.textContent = 'Copy', 1500);
+  });
+}
+
+function esc(str) {
+  const d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
+}
+
+// Close modals on overlay click
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) overlay.classList.remove('active');
+  });
+});
+
+// ============ INIT ============
+renderFrameworks();
+renderModalities();
+loadSetupFields();
+renderChecklists();
+</script>
+</body>
+</html>
