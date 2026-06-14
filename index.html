@@ -4,25 +4,44 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The Insight Forge</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Hanken+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Hanken+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
   --bg: #0d1411;
   --bg2: #101a16;
+  --bg3: #0a100d;
   --card-bg: rgba(22,34,28,0.72);
   --card-border: rgba(198,149,92,0.20);
+  --surface: rgba(22,34,28,0.72);
+  --surface-solid: #15211c;
+  --surface-2: rgba(241,231,214,0.045);
+  --surface-3: rgba(241,231,214,0.025);
   --ink: #F1E7D6;
   --ink-dim: #BDB09A;
+  --ink-faint: #8C8270;
   --copper: #C6955C;
   --copper-lt: #E2B884;
+  --copper-dk: #9A6F3E;
   --ember: #E8743B;
   --ember-glow: #FF8A4C;
   --forest: #2C5F5A;
+  --forest-lt: #4FA89B;
   --mauve: #9B7C8B;
+  --mauve-lt: #C0A2B0;
   --gold: #D8B968;
-  --serif: 'Cormorant Garamond', Georgia, serif;
-  --sans: 'Hanken Grotesk', system-ui, sans-serif;
-  --mono: 'JetBrains Mono', monospace;
+  --line: rgba(198,149,92,0.20);
+  --line-2: rgba(241,231,214,0.10);
+  --line-warm: rgba(232,116,59,0.30);
+  --serif: 'Cormorant Garamond', 'Hoefler Text', Georgia, serif;
+  --sans: 'Hanken Grotesk', system-ui, -apple-system, sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  --radius: 16px;
+  --radius-sm: 11px;
+  --radius-xs: 8px;
+  --shadow: 0 10px 36px rgba(0,0,0,0.45);
+  --shadow-lg: 0 24px 70px rgba(0,0,0,0.6);
+  --glow-copper: 0 0 24px rgba(198,149,92,0.35);
+  --glow-ember: 0 0 22px rgba(232,116,59,0.35);
   --danger: #a84232;
 }
 
@@ -35,165 +54,270 @@ body {
   font-size: 14px;
   line-height: 1.6;
   min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* HEADER */
+/* ===== BACKGROUND SCENE ===== */
+.bg-scene {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 120% 90% at 50% -10%,
+    #16241d 0%, #0d1411 50%, #080d0b 100%
+  );
+}
+.bg-scene::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 18% 12%, rgba(232,116,59,0.16) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 55% at 85% 22%, rgba(198,149,92,0.14) 0%, transparent 52%),
+    radial-gradient(ellipse 55% 50% at 72% 88%, rgba(44,95,90,0.30) 0%, transparent 55%),
+    radial-gradient(ellipse 45% 55% at 8% 82%, rgba(155,124,139,0.14) 0%, transparent 55%);
+}
+.bg-scene::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg,
+    rgba(198,149,92,0.05) 0%,
+    rgba(232,116,59,0.04) 30%,
+    rgba(44,95,90,0.05) 60%,
+    rgba(198,149,92,0.05) 100%
+  );
+  background-size: 400% 400%;
+  animation: bgShimmer 16s ease-in-out infinite alternate;
+}
+@keyframes bgShimmer {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(46px);
+  animation: orbFloat ease-in-out infinite alternate;
+  pointer-events: none;
+}
+@keyframes orbFloat {
+  0% { transform: translate(0,0) scale(1); opacity: .6; }
+  100% { transform: translate(var(--ox,20px), var(--oy,-24px)) scale(1.12); opacity: .85; }
+}
+.rising-ember {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--ember-glow);
+  box-shadow: 0 0 6px 1px rgba(232,116,59,0.8);
+  animation: emRise linear infinite;
+  pointer-events: none;
+}
+@keyframes emRise {
+  0%   { transform: translateY(0) translateX(0); opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: .8; }
+  100% { transform: translateY(-100vh) translateX(var(--drift,0)); opacity: 0; }
+}
+
+/* ===== CONTENT WRAPPER ===== */
+.content-wrap {
+  position: relative;
+  z-index: 1;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 22px;
+}
+
+/* ===== HEADER ===== */
 .app-header {
   text-align: center;
-  padding: 32px 20px 16px;
-  position: relative;
+  padding: 36px 0 20px;
 }
 .app-header h1 {
   font-family: var(--serif);
-  font-size: 2.2rem;
-  font-weight: 600;
-  background: linear-gradient(135deg, var(--copper-lt), var(--ember-glow), var(--gold), var(--copper));
-  background-size: 200% 200%;
+  font-size: clamp(2rem, 5vw, 2.8rem);
+  font-weight: 700;
+  background: linear-gradient(100deg, var(--copper-lt) 0%, var(--ember-glow) 35%, var(--gold) 60%, var(--mauve-lt) 85%, var(--copper) 100%);
+  background-size: 200% auto;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: shimmer 4s ease-in-out infinite;
+  background-clip: text;
+  filter: drop-shadow(0 0 26px rgba(232,116,59,0.30));
+  animation: shimmerText 8s ease-in-out infinite alternate;
 }
 .app-header p {
   color: var(--ink-dim);
-  font-size: 0.85rem;
-  margin-top: 4px;
-  letter-spacing: 0.04em;
+  font-family: var(--mono);
+  font-size: 0.74rem;
+  margin-top: 6px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
 }
 
-@keyframes shimmer {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
+@keyframes shimmerText {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
 }
 
-/* TABS */
+/* ===== TABS (Pill Style) ===== */
 .tab-bar {
   display: flex;
   justify-content: center;
-  gap: 2px;
-  padding: 0 20px;
-  border-bottom: 1px solid var(--card-border);
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
+  gap: 6px;
+  padding: 0 0 20px;
+  flex-wrap: wrap;
 }
 .tab-btn {
-  background: none;
-  border: none;
-  color: var(--ink-dim);
+  padding: 9px 16px;
+  background: var(--surface-2);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--line-2);
+  border-radius: 30px;
+  font-size: 0.8rem;
+  font-weight: 600;
   font-family: var(--sans);
-  font-size: 0.82rem;
-  font-weight: 500;
-  padding: 12px 16px;
+  color: var(--ink-dim);
   cursor: pointer;
+  transition: all 0.22s;
+  letter-spacing: 0.3px;
   white-space: nowrap;
-  border-bottom: 2px solid transparent;
-  transition: all 0.2s;
-  letter-spacing: 0.02em;
 }
-.tab-btn:hover { color: var(--ink); }
-.tab-btn.active {
+.tab-btn:hover {
+  border-color: var(--copper);
   color: var(--copper-lt);
-  border-bottom-color: var(--copper);
+  transform: translateY(-1px);
+}
+.tab-btn.active {
+  background: linear-gradient(135deg, var(--copper-dk), var(--copper));
+  color: #1a120a;
+  border-color: transparent;
+  box-shadow: 0 4px 16px rgba(198,149,92,0.35);
+  font-weight: 700;
 }
 
-/* CONTENT */
-.tab-content { display: none; padding: 24px 20px 60px; max-width: 900px; margin: 0 auto; }
-.tab-content.active { display: block; }
+/* ===== CONTENT ===== */
+.tab-content { display: none; padding: 0 0 60px; }
+.tab-content.active { display: block; animation: panelIn .34s ease; }
+@keyframes panelIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 
-/* CARDS */
+/* ===== CARDS ===== */
 .card {
-  background: var(--card-bg);
-  border: 1px solid var(--card-border);
-  border-radius: 16px;
-  padding: 24px;
-  margin-bottom: 16px;
+  background: var(--surface);
   backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 24px 26px;
+  margin-bottom: 15px;
   position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow), inset 0 1px 0 rgba(241,231,214,0.05);
 }
-.card-accent {
-  border-left: 3px solid transparent;
-  border-image: linear-gradient(to bottom, var(--copper), var(--ember), var(--gold)) 1;
+.card-accent::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 3px; height: 100%;
+  background: linear-gradient(180deg, var(--copper), var(--ember), var(--gold));
+  box-shadow: 0 0 14px rgba(232,116,59,0.5);
 }
 
-/* SECTION HEADERS */
+/* ===== SECTION HEADERS ===== */
 .section-title {
   font-family: var(--serif);
-  font-size: 1.4rem;
-  font-weight: 600;
-  color: var(--copper-lt);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--ink);
   margin-bottom: 16px;
+  margin-top: 28px;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
+  letter-spacing: 0.4px;
 }
+.section-title:first-child { margin-top: 0; }
 .section-title::after {
   content: '';
   flex: 1;
   height: 1px;
-  background: linear-gradient(to right, var(--card-border), transparent);
+  background: linear-gradient(to right, var(--line), transparent);
 }
 
-/* FORMS */
+/* ===== FORMS ===== */
 label {
   display: block;
   font-family: var(--mono);
-  font-size: 0.72rem;
+  font-size: 0.68rem;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--ink-dim);
-  margin-bottom: 6px;
-  margin-top: 14px;
+  letter-spacing: 2px;
+  color: var(--copper);
+  margin-bottom: 7px;
+  margin-top: 15px;
 }
 label:first-child { margin-top: 0; }
 
 input[type="text"], textarea, select {
   width: 100%;
-  background: rgba(13,20,17,0.6);
-  border: 1px solid var(--card-border);
-  border-radius: 11px;
+  background: var(--surface-2);
+  border: 1px solid var(--line-2);
+  border-radius: var(--radius-sm);
   color: var(--ink);
   font-family: var(--sans);
-  font-size: 0.9rem;
-  padding: 10px 14px;
+  font-size: 0.92rem;
+  padding: 11px 14px;
   outline: none;
-  transition: border-color 0.2s;
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
 }
+input[type="text"]::placeholder, textarea::placeholder { color: var(--ink-faint); }
 input:focus, textarea:focus, select:focus {
   border-color: var(--copper);
-  box-shadow: 0 0 0 2px rgba(198,149,92,0.15);
+  box-shadow: 0 0 0 3px rgba(198,149,92,0.18), var(--glow-copper);
+  background: rgba(241,231,214,0.06);
 }
 textarea { resize: vertical; min-height: 80px; }
 select { cursor: pointer; }
 select option { background: var(--bg2); color: var(--ink); }
 
-/* BUTTONS */
+/* ===== BUTTONS ===== */
 .btn {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   font-family: var(--sans);
   font-size: 0.82rem;
-  font-weight: 600;
-  padding: 10px 20px;
+  font-weight: 700;
+  padding: 11px 22px;
   border-radius: 30px;
   border: none;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.22s;
+  letter-spacing: 0.3px;
 }
 .btn-primary {
-  background: linear-gradient(135deg, var(--copper), var(--ember));
+  background: linear-gradient(135deg, var(--copper), var(--copper-dk));
   color: #1a120a;
 }
-.btn-primary:hover { filter: brightness(1.1); transform: translateY(-1px); }
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(198,149,92,0.4); }
+.btn-ember {
+  background: linear-gradient(135deg, var(--ember-glow), var(--ember));
+  color: #fff;
+}
+.btn-ember:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(232,116,59,0.4); }
 .btn-secondary {
   background: transparent;
-  border: 1px solid var(--copper);
-  color: var(--copper-lt);
+  border: 1px solid var(--line);
+  color: var(--ink-dim);
 }
-.btn-secondary:hover { background: rgba(198,149,92,0.1); }
-.btn-small {
-  font-size: 0.75rem;
-  padding: 6px 14px;
-}
+.btn-secondary:hover { border-color: var(--copper); color: var(--copper-lt); background: rgba(198,149,92,0.08); }
+.btn-small { font-size: 0.76rem; padding: 7px 15px; }
 .btn-danger {
   background: transparent;
   border: 1px solid var(--danger);
@@ -212,24 +336,44 @@ select option { background: var(--bg2); color: var(--ink); }
 
 .btn-row { display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap; }
 
-/* TAGS */
+/* ===== TAGS ===== */
 .tag {
   display: inline-block;
   font-family: var(--mono);
-  font-size: 0.68rem;
+  font-size: 0.62rem;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  padding: 3px 10px;
-  border-radius: 30px;
+  letter-spacing: 1px;
+  padding: 3px 9px;
+  border-radius: 20px;
   border: 1px solid;
 }
-.tag-ember { border-color: var(--ember); color: var(--ember); }
-.tag-forest { border-color: var(--forest); color: var(--forest); }
-.tag-copper { border-color: var(--copper); color: var(--copper-lt); }
-.tag-mauve { border-color: var(--mauve); color: var(--mauve); }
-.tag-gold { border-color: var(--gold); color: var(--gold); }
+.tag-ember { border-color: var(--ember); color: var(--ember-glow); background: rgba(232,116,59,0.14); }
+.tag-forest { border-color: var(--forest); color: var(--forest-lt); background: rgba(44,95,90,0.13); }
+.tag-copper { border-color: var(--copper); color: var(--copper-lt); background: rgba(198,149,92,0.12); }
+.tag-mauve { border-color: var(--mauve); color: var(--mauve-lt); background: rgba(155,124,139,0.14); }
+.tag-gold { border-color: var(--gold); color: var(--gold); background: rgba(216,185,104,0.13); }
 
-/* CHECKLIST */
+/* ===== FLAME FLAG ===== */
+.flame-flag {
+  display: inline-flex;
+  align-items: center;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: transform 0.2s;
+  user-select: none;
+  filter: grayscale(0.8) opacity(0.4);
+}
+.flame-flag.lit {
+  filter: none;
+  animation: flamePulse 2s ease-in-out infinite;
+}
+@keyframes flamePulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
+
+/* ===== CHECKLIST ===== */
 .checklist-item {
   display: flex;
   align-items: flex-start;
@@ -250,11 +394,9 @@ select option { background: var(--bg2); color: var(--ink); }
   margin-top: 2px;
   position: relative;
 }
-.checklist-item input[type="checkbox"]:checked {
-  background: var(--copper);
-}
+.checklist-item input[type="checkbox"]:checked { background: var(--copper); }
 .checklist-item input[type="checkbox"]:checked::after {
-  content: '✓';
+  content: '\2713';
   position: absolute;
   top: -1px;
   left: 3px;
@@ -265,11 +407,11 @@ select option { background: var(--bg2); color: var(--ink); }
 .checklist-label { font-size: 0.88rem; }
 .checklist-label.checked { text-decoration: line-through; color: var(--ink-dim); }
 
-/* COPY BUTTON */
+/* ===== PROMPT BLOCKS ===== */
 .prompt-block {
   background: rgba(13,20,17,0.6);
-  border: 1px solid var(--card-border);
-  border-radius: 11px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
   padding: 16px;
   margin-bottom: 12px;
   position: relative;
@@ -280,7 +422,7 @@ select option { background: var(--bg2); color: var(--ink); }
   color: var(--copper-lt);
   margin-bottom: 8px;
 }
-.prompt-block p, .prompt-block .prompt-text {
+.prompt-block .prompt-text {
   font-size: 0.85rem;
   color: var(--ink-dim);
   white-space: pre-wrap;
@@ -291,7 +433,7 @@ select option { background: var(--bg2); color: var(--ink); }
   top: 12px;
   right: 12px;
   background: rgba(198,149,92,0.15);
-  border: 1px solid var(--card-border);
+  border: 1px solid var(--line);
   color: var(--copper-lt);
   font-family: var(--mono);
   font-size: 0.68rem;
@@ -299,11 +441,11 @@ select option { background: var(--bg2); color: var(--ink); }
   border-radius: 8px;
   cursor: pointer;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 1px;
 }
 .copy-btn:hover { background: rgba(198,149,92,0.25); }
 
-/* FILTERS */
+/* ===== FILTERS ===== */
 .filter-bar {
   display: flex;
   gap: 8px;
@@ -325,16 +467,25 @@ select option { background: var(--bg2); color: var(--ink); }
   padding: 8px 12px;
 }
 
-/* CONCEPT/IDEA CARDS */
+/* ===== ITEM CARDS (Concepts/Ideas) ===== */
 .item-card {
-  background: var(--card-bg);
-  border: 1px solid var(--card-border);
-  border-left: 3px solid transparent;
-  border-image: linear-gradient(to bottom, var(--copper), var(--ember), var(--gold)) 1;
-  border-radius: 0 16px 16px 0;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 0 var(--radius) var(--radius) 0;
   padding: 18px 20px;
   margin-bottom: 10px;
   backdrop-filter: blur(16px);
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+.item-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 3px; height: 100%;
+  background: linear-gradient(180deg, var(--copper), var(--ember), var(--gold));
+  box-shadow: 0 0 14px rgba(232,116,59,0.5);
 }
 .item-card-header {
   display: flex;
@@ -353,6 +504,7 @@ select option { background: var(--bg2); color: var(--ink); }
   gap: 6px;
   margin-top: 8px;
   flex-wrap: wrap;
+  align-items: center;
 }
 .item-card-desc {
   font-size: 0.85rem;
@@ -362,7 +514,7 @@ select option { background: var(--bg2); color: var(--ink); }
 .item-card-story {
   font-style: italic;
   font-size: 0.82rem;
-  color: var(--mauve);
+  color: var(--mauve-lt);
   margin-top: 6px;
   padding-left: 12px;
   border-left: 2px solid var(--mauve);
@@ -378,7 +530,7 @@ select option { background: var(--bg2); color: var(--ink); }
   color: var(--gold);
 }
 
-/* PIPELINE */
+/* ===== PIPELINE ===== */
 .pipeline-stage {
   display: inline-flex;
   align-items: center;
@@ -386,39 +538,38 @@ select option { background: var(--bg2); color: var(--ink); }
   font-family: var(--mono);
   font-size: 0.7rem;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 1px;
 }
-.stage-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-}
+.stage-dot { width: 8px; height: 8px; border-radius: 50%; }
 .stage-not-started .stage-dot { background: var(--ink-dim); }
 .stage-outlined .stage-dot { background: var(--forest); }
 .stage-drafted .stage-dot { background: var(--gold); }
 .stage-published .stage-dot { background: var(--ember-glow); }
 
-/* MODAL */
+/* ===== MODAL ===== */
 .modal-overlay {
   display: none;
   position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0,0,0,0.7);
-  z-index: 1000;
+  inset: 0;
+  background: rgba(8,13,11,0.78);
+  backdrop-filter: blur(6px);
+  z-index: 3000;
   align-items: center;
   justify-content: center;
   padding: 20px;
 }
 .modal-overlay.active { display: flex; }
 .modal {
-  background: var(--bg2);
-  border: 1px solid var(--card-border);
-  border-radius: 16px;
-  padding: 28px;
+  background: rgba(15,23,19,0.96);
+  backdrop-filter: blur(24px);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 30px;
   width: 100%;
-  max-width: 560px;
-  max-height: 85vh;
+  max-width: 600px;
+  max-height: 88vh;
   overflow-y: auto;
+  box-shadow: var(--shadow-lg);
 }
 .modal h3 {
   font-family: var(--serif);
@@ -427,7 +578,7 @@ select option { background: var(--bg2); color: var(--ink); }
   margin-bottom: 16px;
 }
 
-/* EMPTY STATE */
+/* ===== EMPTY STATE ===== */
 .empty-state {
   text-align: center;
   padding: 48px 20px;
@@ -435,29 +586,49 @@ select option { background: var(--bg2); color: var(--ink); }
 }
 .empty-state p { font-size: 0.9rem; margin-bottom: 16px; }
 
-/* SETUP ITEMS */
+/* ===== SETUP ITEMS ===== */
 .setup-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 10px 14px;
-  background: rgba(13,20,17,0.4);
-  border: 1px solid rgba(198,149,92,0.1);
-  border-radius: 11px;
+  background: var(--surface-2);
+  border: 1px solid var(--line-2);
+  border-radius: var(--radius-sm);
   margin-bottom: 6px;
 }
-.setup-item-name {
-  font-weight: 500;
-  font-size: 0.9rem;
-}
-.setup-item-desc {
+.setup-item-name { font-weight: 500; font-size: 0.9rem; }
+.setup-item-desc { font-size: 0.78rem; color: var(--ink-dim); margin-top: 2px; }
+.setup-item-actions { display: flex; gap: 4px; align-items: center; }
+
+/* ===== REFINEMENT LOG ===== */
+.refinement-log {
+  margin-top: 6px;
+  padding: 8px 12px;
+  background: rgba(44,95,90,0.10);
+  border: 1px solid rgba(79,168,155,0.20);
+  border-radius: var(--radius-xs);
   font-size: 0.78rem;
   color: var(--ink-dim);
+}
+.refinement-entry {
+  padding: 4px 0;
+  border-bottom: 1px solid rgba(241,231,214,0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+}
+.refinement-entry:last-child { border-bottom: none; }
+.refinement-date {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  color: var(--ink-faint);
+  white-space: nowrap;
   margin-top: 2px;
 }
-.setup-item-actions { display: flex; gap: 4px; }
 
-/* GUIDE CONTENT */
+/* ===== GUIDE STEPS ===== */
 .guide-step {
   display: flex;
   gap: 16px;
@@ -479,42 +650,95 @@ select option { background: var(--bg2); color: var(--ink); }
 .guide-text p {
   font-size: 0.85rem;
   color: var(--ink-dim);
+  line-height: 1.6;
 }
 
-/* TOAST */
+/* ===== INFO BOX ===== */
+.info-box {
+  background: rgba(44,95,90,0.13);
+  border: 1px solid rgba(79,168,155,0.26);
+  border-radius: var(--radius-sm);
+  padding: 14px 18px;
+  color: var(--ink-dim);
+  font-size: 0.85rem;
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+.info-box b, .info-box strong { color: var(--forest-lt); font-weight: 600; }
+
+/* ===== WORKFLOW DIAGRAM ===== */
+.workflow-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  font-size: 0.85rem;
+}
+.workflow-arrow {
+  color: var(--copper);
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+.workflow-source {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--ember-glow);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  min-width: 120px;
+}
+.workflow-dest {
+  font-family: var(--sans);
+  font-weight: 500;
+  color: var(--ink);
+}
+
+/* ===== TOAST ===== */
 .toast {
   position: fixed;
   bottom: 24px;
   left: 50%;
-  transform: translateX(-50%) translateY(100px);
-  background: var(--copper);
-  color: #1a120a;
-  font-family: var(--sans);
-  font-weight: 600;
-  font-size: 0.82rem;
-  padding: 10px 24px;
+  transform: translateX(-50%) translateY(20px);
+  background: rgba(15,23,19,0.96);
+  border: 1px solid var(--copper);
+  color: var(--copper-lt);
+  padding: 11px 22px;
   border-radius: 30px;
-  z-index: 2000;
-  transition: transform 0.3s ease;
+  font-size: 0.85rem;
+  font-weight: 600;
+  font-family: var(--sans);
+  z-index: 4000;
+  opacity: 0;
+  transition: all 0.3s;
+  box-shadow: var(--shadow);
 }
-.toast.show { transform: translateX(-50%) translateY(0); }
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-/* RESPONSIVE */
+/* ===== RESPONSIVE ===== */
 @media (max-width: 600px) {
   .app-header h1 { font-size: 1.6rem; }
-  .tab-btn { font-size: 0.75rem; padding: 10px 12px; }
-  .tab-content { padding: 16px 14px 60px; }
-  .card { padding: 18px; }
+  .tab-btn { font-size: 0.72rem; padding: 7px 12px; }
+  .tab-content { padding: 0 0 60px; }
+  .card { padding: 20px 18px; }
   .filter-bar { flex-direction: column; }
   .filter-bar select, .filter-bar input[type="text"] { width: 100%; }
+  .content-wrap { padding: 0 14px; }
+  .workflow-source { min-width: 80px; font-size: 0.65rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .app-header h1 { animation: none; }
+  * { animation-duration: .001s !important; animation-iteration-count: 1 !important; }
+  .orb, .rising-ember { display: none; }
 }
 </style>
 </head>
 <body>
+
+<!-- BACKGROUND SCENE -->
+<div class="bg-scene" id="bg-scene"></div>
+
+<!-- CONTENT -->
+<div class="content-wrap">
 
 <div class="app-header">
   <h1>The Insight Forge</h1>
@@ -528,6 +752,7 @@ select option { background: var(--bg2); color: var(--ink); }
   <button class="tab-btn" data-tab="prompts">Prompts</button>
   <button class="tab-btn" data-tab="concepts">Concepts</button>
   <button class="tab-btn" data-tab="ideas">Ideas</button>
+  <button class="tab-btn" data-tab="student">Student Version</button>
 </div>
 
 <!-- ============ SETUP TAB ============ -->
@@ -537,10 +762,10 @@ select option { background: var(--bg2); color: var(--ink); }
     Define your frameworks, modalities, offer, and audience. These populate your prompt templates and concept tags throughout the tool.
   </p>
 
-  <!-- Frameworks -->
+  <!-- Frameworks with Refinement Logs -->
   <div class="card card-accent">
-    <h3 style="font-family:var(--serif);font-size:1.15rem;color:var(--copper-lt);margin-bottom:12px;">Your Frameworks</h3>
-    <p style="font-size:0.82rem;color:var(--ink-dim);margin-bottom:12px;">The named systems, models, or processes you teach. These become tagging options for your concepts.</p>
+    <h3 style="font-family:var(--serif);font-size:1.15rem;color:var(--copper-lt);margin-bottom:4px;">Your Frameworks</h3>
+    <p style="font-size:0.82rem;color:var(--ink-dim);margin-bottom:12px;">The named systems, models, or processes you teach. Each framework includes a refinement log so you can track how it evolves over time.</p>
     <div id="frameworks-list"></div>
     <div style="margin-top:12px;">
       <label>Framework Name</label>
@@ -555,7 +780,7 @@ select option { background: var(--bg2); color: var(--ink); }
 
   <!-- Modalities -->
   <div class="card card-accent">
-    <h3 style="font-family:var(--serif);font-size:1.15rem;color:var(--copper-lt);margin-bottom:12px;">Your Modalities</h3>
+    <h3 style="font-family:var(--serif);font-size:1.15rem;color:var(--copper-lt);margin-bottom:4px;">Your Modalities</h3>
     <p style="font-size:0.82rem;color:var(--ink-dim);margin-bottom:12px;">The skills, tools, or disciplines you weave into your work.</p>
     <div id="modalities-list"></div>
     <div style="margin-top:12px;">
@@ -575,7 +800,7 @@ select option { background: var(--bg2); color: var(--ink); }
 
   <!-- Core Info -->
   <div class="card card-accent">
-    <h3 style="font-family:var(--serif);font-size:1.15rem;color:var(--copper-lt);margin-bottom:12px;">Core Identity</h3>
+    <h3 style="font-family:var(--serif);font-size:1.15rem;color:var(--copper-lt);margin-bottom:4px;">Core Identity</h3>
     <label>Core Offer</label>
     <input type="text" id="core-offer" placeholder="Your primary offer or service" oninput="saveSetup()">
     <label>Audience</label>
@@ -585,7 +810,7 @@ select option { background: var(--bg2); color: var(--ink); }
   </div>
 
   <div class="card" style="border-color:var(--forest);">
-    <h3 style="font-family:var(--serif);font-size:1.05rem;color:var(--forest);margin-bottom:8px;">Generate NotebookLM Instructions</h3>
+    <h3 style="font-family:var(--serif);font-size:1.05rem;color:var(--forest-lt);margin-bottom:8px;">Generate NotebookLM Instructions</h3>
     <p style="font-size:0.82rem;color:var(--ink-dim);margin-bottom:12px;">Once your setup is complete, generate a customized instruction set for your NotebookLM notebook based on your frameworks and modalities.</p>
     <button class="btn btn-secondary btn-small" onclick="generateNBLMInstructions()">Generate Instructions</button>
   </div>
@@ -601,11 +826,67 @@ select option { background: var(--bg2); color: var(--ink); }
       You generate intellectual property every single day through your practice, your client calls, your reflections, and your teaching. Most of it disappears. This system captures it, distills it, and turns it into content and offers.
     </p>
     <p style="font-size:0.88rem;color:var(--ink-dim);">
-      The system has three layers: Capture (recording your insights), Distill (extracting the signal from the noise), and Create (turning distilled concepts into content, trainings, and offers).
+      The system has three layers: <strong style="color:var(--copper-lt);">Capture</strong> (recording your insights), <strong style="color:var(--copper-lt);">Distill</strong> (extracting the signal from the noise), and <strong style="color:var(--copper-lt);">Create</strong> (turning distilled concepts into content, trainings, and offers).
     </p>
   </div>
 
-  <div class="section-title" style="margin-top:28px;">Daily Practice</div>
+  <!-- Two-Notebook Workflow -->
+  <div class="section-title">The Two-Notebook Workflow</div>
+  <div class="card card-accent">
+    <h3 style="font-family:var(--serif);font-size:1.15rem;color:var(--copper-lt);margin-bottom:12px;">Weekly Forge (Processing Notebook)</h3>
+    <p style="font-size:0.85rem;color:var(--ink-dim);margin-bottom:10px;">
+      This is your working notebook in NotebookLM. Every week you load it with fresh transcripts, run the extraction prompts, and process the output. Think of it as your workbench: things come in, get distilled, and move out.
+    </p>
+    <div class="info-box">
+      <strong>Weekly cycle:</strong> Load transcripts at the start of your distillation session. Run all extraction prompts. Route the output to the right places. Then <strong>remove the transcripts from this notebook</strong> so it stays clean for the next week. Only the current week's sources should live here at any given time.
+    </div>
+  </div>
+  <div class="card card-accent">
+    <h3 style="font-family:var(--serif);font-size:1.15rem;color:var(--copper-lt);margin-bottom:12px;">Insights Vault (Accumulation Notebook)</h3>
+    <p style="font-size:0.85rem;color:var(--ink-dim);margin-bottom:10px;">
+      This is your long-term knowledge base. The best IP, framework refinements, and ad intelligence findings from each weekly processing session get documented here as dated entries. Over time this notebook becomes a searchable archive of everything your practice has produced.
+    </p>
+    <div class="info-box">
+      <strong>What lives here permanently:</strong> Dated framework refinement entries, ad intelligence analysis, high-value IP discoveries, pattern summaries, and anything you want to reference or build on later. This notebook grows. The Weekly Forge stays lean.
+    </div>
+  </div>
+
+  <!-- Routing Workflow -->
+  <div class="section-title">Routing Workflow</div>
+  <div class="card card-accent">
+    <h3 style="font-family:var(--serif);font-size:1.15rem;color:var(--copper-lt);margin-bottom:12px;">Where Everything Goes</h3>
+    <p style="font-size:0.85rem;color:var(--ink-dim);margin-bottom:14px;">
+      After running extraction prompts, route each type of output to its designated home:
+    </p>
+    <div class="workflow-row">
+      <span class="workflow-source">IP Generated</span>
+      <span class="workflow-arrow">&#10145;</span>
+      <span class="workflow-dest">Concepts tab in The Insight Forge</span>
+    </div>
+    <div class="workflow-row">
+      <span class="workflow-source">Content Seeds</span>
+      <span class="workflow-arrow">&#10145;</span>
+      <span class="workflow-dest">Ideas tab in The Insight Forge</span>
+    </div>
+    <div class="workflow-row">
+      <span class="workflow-source">Framework Refinements</span>
+      <span class="workflow-arrow">&#10145;</span>
+      <span class="workflow-dest">Refinement Logs on the framework (Setup tab) + dated entry in Insights Vault notebook</span>
+    </div>
+    <div class="workflow-row">
+      <span class="workflow-source">Ad Intelligence</span>
+      <span class="workflow-arrow">&#10145;</span>
+      <span class="workflow-dest">Separate dated section in the Insights Vault notebook</span>
+    </div>
+    <div class="workflow-row">
+      <span class="workflow-source">Offer Signals</span>
+      <span class="workflow-arrow">&#10145;</span>
+      <span class="workflow-dest">Concepts tab (tagged as Pattern source) or Ideas tab (tagged as Offer type)</span>
+    </div>
+  </div>
+
+  <!-- Daily Practice -->
+  <div class="section-title">Daily Practice</div>
   <div class="guide-step">
     <div class="guide-num">1</div>
     <div class="guide-text">
@@ -617,23 +898,31 @@ select option { background: var(--bg2); color: var(--ink); }
     <div class="guide-num">2</div>
     <div class="guide-text">
       <h4>Record an Insight Loom</h4>
-      <p>Spend 5 to 10 minutes talking through the insight that emerged. What was it? What triggered it? How have you seen this show up before, in your own journey or with students? What is the practical application? What framework does it connect to? Drop the Loom link into your NotebookLM notebook.</p>
+      <p>Spend 5 to 10 minutes talking through the insight that emerged. What was it? What triggered it? How have you seen this show up before, in your own journey or with students? What is the practical application? What framework does it connect to?</p>
     </div>
   </div>
   <div class="guide-step">
     <div class="guide-num">3</div>
     <div class="guide-text">
+      <h4>Paste the Transcript</h4>
+      <p>Copy the Loom transcript text and paste it directly into your Weekly Forge notebook as a source. Do not paste the Loom video link. NotebookLM needs the raw transcript text to analyze, not a URL it cannot access.</p>
+    </div>
+  </div>
+  <div class="guide-step">
+    <div class="guide-num">4</div>
+    <div class="guide-text">
       <h4>Log It Here</h4>
-      <p>If the insight feels significant, add it as a Concept in the Concepts tab. Tag the source, the connected framework, and its current readiness level. You can always come back and develop it further.</p>
+      <p>If the insight feels significant, add it as a Concept in the Concepts tab. Tag the source, the connected framework, and its current readiness level. Flag it with the flame if it feels high-priority.</p>
     </div>
   </div>
 
-  <div class="section-title" style="margin-top:28px;">Weekly Distillation</div>
+  <!-- Weekly Distillation -->
+  <div class="section-title">Weekly Distillation</div>
   <div class="guide-step">
     <div class="guide-num">1</div>
     <div class="guide-text">
       <h4>Load Your Sources</h4>
-      <p>Consolidate your daily Looms into one weekly Loom. Pull transcripts from any coaching or implementation calls. Drop them into your NotebookLM notebook.</p>
+      <p>Paste this week's Loom transcripts and any coaching or implementation call transcripts into your Weekly Forge notebook. Remember: paste the transcript text, not links to videos.</p>
     </div>
   </div>
   <div class="guide-step">
@@ -646,15 +935,22 @@ select option { background: var(--bg2); color: var(--ink); }
   <div class="guide-step">
     <div class="guide-num">3</div>
     <div class="guide-text">
-      <h4>Process into Concepts and Ideas</h4>
-      <p>Take the most important findings and add them as Concepts and Ideas here. A concept is a theme or principle. An idea is a specific piece of content or action you could take.</p>
+      <h4>Route the Output</h4>
+      <p>Follow the routing workflow above. IP goes to Concepts. Content seeds go to Ideas. Framework refinements go to the Setup tab refinement logs and to a dated entry in your Insights Vault. Ad intelligence goes to its own dated section in the Insights Vault.</p>
     </div>
   </div>
   <div class="guide-step">
     <div class="guide-num">4</div>
     <div class="guide-text">
+      <h4>Clean the Weekly Forge</h4>
+      <p>After processing, remove this week's transcripts from your Weekly Forge notebook. It should be empty and ready for next week's sources. Your Insights Vault keeps the accumulated knowledge.</p>
+    </div>
+  </div>
+  <div class="guide-step">
+    <div class="guide-num">5</div>
+    <div class="guide-text">
       <h4>Create from Your Vault</h4>
-      <p>Use the Claude prompts to turn developed concepts into blog posts, social content, emails, trainings, or challenge material. Your vault feeds your content pipeline.</p>
+      <p>Use the Claude creation prompts to turn developed concepts into blog posts, social content, emails, trainings, or challenge material. Your vault feeds your content pipeline.</p>
     </div>
   </div>
 </div>
@@ -663,16 +959,16 @@ select option { background: var(--bg2); color: var(--ink); }
 <div class="tab-content" id="tab-practice">
   <div class="section-title">Daily Practice</div>
   <div class="card card-accent">
-    <div id="daily-date" style="font-family:var(--mono);font-size:0.72rem;color:var(--ink-dim);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:12px;"></div>
+    <div id="daily-date" style="font-family:var(--mono);font-size:0.72rem;color:var(--ink-faint);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px;"></div>
     <div id="daily-checklist"></div>
     <div class="btn-row">
       <button class="btn btn-secondary btn-small" onclick="resetDaily()">Reset Daily</button>
     </div>
   </div>
 
-  <div class="section-title" style="margin-top:28px;">Weekly Distillation</div>
+  <div class="section-title">Weekly Distillation</div>
   <div class="card card-accent">
-    <div id="weekly-date" style="font-family:var(--mono);font-size:0.72rem;color:var(--ink-dim);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:12px;"></div>
+    <div id="weekly-date" style="font-family:var(--mono);font-size:0.72rem;color:var(--ink-faint);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px;"></div>
     <div id="weekly-checklist"></div>
     <div class="btn-row">
       <button class="btn btn-secondary btn-small" onclick="resetWeekly()">Reset Weekly</button>
@@ -683,11 +979,13 @@ select option { background: var(--bg2); color: var(--ink); }
 <!-- ============ PROMPTS TAB ============ -->
 <div class="tab-content" id="tab-prompts">
   <div class="section-title">NotebookLM Extraction Prompts</div>
-  <p style="color:var(--ink-dim);font-size:0.85rem;margin-bottom:16px;">Run these in your NotebookLM notebook after loading weekly sources. Copy each prompt, paste it in, and review the output before moving on.</p>
+  <div class="info-box" style="margin-bottom:16px;">
+    <strong>How to use:</strong> Run these in your Weekly Forge notebook after loading this week's transcripts. Copy each prompt, paste it in, and review the output before moving on. Run them in order: each prompt is written to surface only new information not already covered by the previous prompts.
+  </div>
 
   <div class="prompt-block">
     <button class="copy-btn" onclick="copyPrompt(this)">Copy</button>
-    <h4>Questions Asked</h4>
+    <h4>1. Questions Asked</h4>
     <div class="prompt-text">Review all call transcripts from this week. List every specific question a member asked or problem they brought to the call. For each one, include:
 - Who asked it (if identifiable)
 - The core question in their words
@@ -697,7 +995,7 @@ select option { background: var(--bg2); color: var(--ink); }
 
   <div class="prompt-block">
     <button class="copy-btn" onclick="copyPrompt(this)">Copy</button>
-    <h4>IP Generated</h4>
+    <h4>2. IP Generated</h4>
     <div class="prompt-text">What advice, frameworks, analogies, step-by-step processes, or solutions were taught or explained during these calls? Focus on anything that was spontaneous or said in the moment rather than pre-planned. Include:
 - The core idea or framework articulated
 - The context that prompted it
@@ -708,14 +1006,14 @@ Flag anything that could become a standalone training, blog post, or curriculum 
 
   <div class="prompt-block">
     <button class="copy-btn" onclick="copyPrompt(this)">Copy</button>
-    <h4>Member Wins</h4>
+    <h4>3. Member Wins</h4>
     <div class="prompt-text">Identify any breakthroughs, progress reports, celebrations, or aha moments that members shared during these calls. Note what specifically shifted for them and what it tells us about where the community is in their journey right now.</div>
   </div>
 
   <div class="prompt-block">
     <button class="copy-btn" onclick="copyPrompt(this)">Copy</button>
-    <h4>Insight Loom Inventory</h4>
-    <div class="prompt-text">Review the insight Loom(s) from this week. For each distinct insight discussed, create an entry with:
+    <h4>4. Insight Loom Inventory</h4>
+    <div class="prompt-text">Review the insight Loom transcript(s) from this week. For each distinct insight discussed, create an entry with:
 - The core insight in one sentence
 - What triggered it (which student, which situation, which call moment)
 - Any personal story connected to it
@@ -725,31 +1023,34 @@ Flag anything that could become a standalone training, blog post, or curriculum 
 
   <div class="prompt-block">
     <button class="copy-btn" onclick="copyPrompt(this)">Copy</button>
-    <h4>Weekly Patterns</h4>
-    <div class="prompt-text">Looking across ALL sources this week (calls AND insight Looms), what patterns do you see? Specifically:
-- What topics or themes came up more than once?
-- What are members collectively struggling with right now?
-- Are there any disconnects between what is being taught and what members are actually asking about?
-- What is the strongest content opportunity from this week?</div>
+    <h4>5. Gap Analysis and Offer Signals</h4>
+    <div class="prompt-text">Set aside everything already surfaced in the previous prompts (questions, IP, wins, Loom insights). Looking only at what has NOT been covered yet, identify:
+- Unspoken needs: things members are struggling with that they did not directly ask about but that showed up in how they described their situation
+- Gaps in current offerings: support, tools, or resources that do not currently exist but would clearly serve what this community needs right now
+- Offer signals: topics with enough urgency or frequency to justify a paid sprint, mini course, workshop, or new template
+- Pricing context: based on the depth of need and transformation implied, what format and price point would fit
+Do not repeat anything from prompts 1 through 4. This prompt is exclusively for net-new gaps and signals.</div>
   </div>
 
   <div class="prompt-block">
     <button class="copy-btn" onclick="copyPrompt(this)">Copy</button>
-    <h4>Offer Intelligence</h4>
-    <div class="prompt-text">Based on everything from this week, are there any signals about:
-- Support or resources members are asking for that do not currently exist?
-- Things members would likely pay for based on the urgency or frequency of their questions?
-- Topics that could become a mini course, workshop, or sprint offer?
-- Gaps in the current offerings that these conversations reveal?</div>
+    <h4>6. Ad Intelligence and Sales Page Comparison</h4>
+    <div class="prompt-text">Analyze any ad-related discussions, competitor mentions, or market observations from this week's sources. Extract:
+- Language patterns: specific words, phrases, or framings members used to describe their struggles or desires that would work well in ad copy or sales page headlines
+- Objection signals: hesitations, doubts, or fears members voiced that need to be addressed in sales copy
+- Competitor awareness: any mention of other programs, courses, or practitioners, and what members said they liked or did not like about them
+- Positioning gaps: areas where your approach clearly differs from what members have experienced elsewhere
+- Sales page comparison: based on the language members actually use versus the language on your current sales pages, where is there a mismatch between how you describe your offers and how your people describe what they need?
+Format this as a dated intelligence brief that can be saved to the Insights Vault notebook.</div>
   </div>
 
   <div class="prompt-block">
     <button class="copy-btn" onclick="copyPrompt(this)">Copy</button>
     <h4>Search a Topic</h4>
-    <div class="prompt-text">Which Loom or call discussed [TOPIC]? Give me the source name, summarize what was said, and include any direct quotes that capture the core idea.</div>
+    <div class="prompt-text">Which Loom transcript or call discussed [TOPIC]? Give me the source name, summarize what was said, and include any direct quotes that capture the core idea.</div>
   </div>
 
-  <div class="section-title" style="margin-top:32px;">Claude Creation Prompts</div>
+  <div class="section-title">Claude Creation Prompts</div>
   <p style="color:var(--ink-dim);font-size:0.85rem;margin-bottom:16px;">Use these to turn your distilled concepts into content. Fill in the brackets with details from your Concepts tab.</p>
 
   <div class="prompt-block">
@@ -840,6 +1141,10 @@ Help me explore what this offer could look like:
       <option value="fully-formed">Fully Formed</option>
     </select>
     <select id="concept-filter-framework" onchange="renderConcepts()"></select>
+    <label style="display:inline-flex;align-items:center;gap:6px;margin:0;font-size:0.78rem;color:var(--ember-glow);text-transform:none;letter-spacing:0;">
+      <input type="checkbox" id="concept-filter-flame" onchange="renderConcepts()" style="width:auto;min-width:auto;appearance:auto;border:none;margin:0;">
+      &#128293; Only
+    </label>
     <button class="btn btn-primary btn-small" onclick="openConceptModal()">+ New Concept</button>
   </div>
 
@@ -870,14 +1175,97 @@ Help me explore what this offer could look like:
       <option value="drafted">Drafted</option>
       <option value="published">Published</option>
     </select>
-    <label style="display:inline-flex;align-items:center;gap:6px;margin:0;font-size:0.78rem;">
+    <label style="display:inline-flex;align-items:center;gap:6px;margin:0;font-size:0.78rem;color:var(--ember-glow);text-transform:none;letter-spacing:0;">
+      <input type="checkbox" id="idea-filter-flame" onchange="renderIdeas()" style="width:auto;min-width:auto;appearance:auto;border:none;margin:0;">
+      &#128293; Only
+    </label>
+    <label style="display:inline-flex;align-items:center;gap:6px;margin:0;font-size:0.78rem;text-transform:none;letter-spacing:0;">
       <input type="checkbox" id="idea-show-archived" onchange="renderIdeas()" style="width:auto;min-width:auto;appearance:auto;border:none;margin:0;">
-      Show Archived
+      Archived
     </label>
     <button class="btn btn-primary btn-small" onclick="openIdeaModal()">+ New Idea</button>
   </div>
 
   <div id="ideas-list"></div>
+</div>
+
+<!-- ============ STUDENT VERSION TAB ============ -->
+<div class="tab-content" id="tab-student">
+  <div class="section-title">Student Insight Forge</div>
+  <div class="info-box" style="margin-bottom:20px;">
+    This is a simplified version for your students. It tracks frameworks, modalities, Spark Statement, and idea capture with content tags and priority flags. No NotebookLM routing, no ad intelligence layer. Students can use this standalone.
+  </div>
+
+  <!-- Student Setup -->
+  <div class="card card-accent">
+    <h3 style="font-family:var(--serif);font-size:1.15rem;color:var(--copper-lt);margin-bottom:4px;">Your Frameworks</h3>
+    <p style="font-size:0.82rem;color:var(--ink-dim);margin-bottom:12px;">The named systems, models, or processes you teach or are developing.</p>
+    <div id="s-frameworks-list"></div>
+    <div style="margin-top:12px;">
+      <label>Framework Name</label>
+      <input type="text" id="s-fw-name" placeholder="e.g., My Healing Protocol">
+      <label>Brief Description</label>
+      <input type="text" id="s-fw-desc" placeholder="e.g., Three-step energy clearing process">
+      <div class="btn-row">
+        <button class="btn btn-primary btn-small" onclick="sAddFramework()">Add Framework</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card card-accent">
+    <h3 style="font-family:var(--serif);font-size:1.15rem;color:var(--copper-lt);margin-bottom:4px;">Your Modalities</h3>
+    <p style="font-size:0.82rem;color:var(--ink-dim);margin-bottom:12px;">The skills, tools, or disciplines you weave into your work.</p>
+    <div id="s-modalities-list"></div>
+    <div style="margin-top:12px;">
+      <label>Modality Name</label>
+      <input type="text" id="s-mod-name" placeholder="e.g., Breathwork">
+      <label>Type</label>
+      <select id="s-mod-type">
+        <option value="braided">Braided (woven throughout)</option>
+        <option value="sequenced">Sequenced (specific order)</option>
+        <option value="support">Support (enhances primary)</option>
+      </select>
+      <div class="btn-row">
+        <button class="btn btn-primary btn-small" onclick="sAddModality()">Add Modality</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card card-accent">
+    <h3 style="font-family:var(--serif);font-size:1.15rem;color:var(--copper-lt);margin-bottom:4px;">Spark Statement</h3>
+    <p style="font-size:0.82rem;color:var(--ink-dim);margin-bottom:12px;">Your positioning statement: what you do, who you serve, how your method works.</p>
+    <textarea id="s-spark" placeholder="Write your Spark Statement here..." rows="3" oninput="sSaveSetup()"></textarea>
+  </div>
+
+  <!-- Student Idea Capture -->
+  <div class="section-title">Idea Capture</div>
+  <div class="filter-bar">
+    <input type="text" id="s-idea-search" placeholder="Search ideas..." oninput="sRenderIdeas()">
+    <select id="s-idea-filter-type" onchange="sRenderIdeas()">
+      <option value="">All Types</option>
+      <option value="blog">Blog</option>
+      <option value="social">Social</option>
+      <option value="email">Email</option>
+      <option value="training">Training</option>
+      <option value="offer">Offer</option>
+      <option value="other">Other</option>
+    </select>
+    <label style="display:inline-flex;align-items:center;gap:6px;margin:0;font-size:0.78rem;color:var(--ember-glow);text-transform:none;letter-spacing:0;">
+      <input type="checkbox" id="s-idea-filter-flame" onchange="sRenderIdeas()" style="width:auto;min-width:auto;appearance:auto;border:none;margin:0;">
+      &#128293; Only
+    </label>
+    <button class="btn btn-primary btn-small" onclick="sOpenIdeaModal()">+ New Idea</button>
+  </div>
+  <div id="s-ideas-list"></div>
+
+  <!-- Download Student Version -->
+  <div style="margin-top:24px;">
+    <div class="card" style="border-color:var(--forest);text-align:center;">
+      <h3 style="font-family:var(--serif);font-size:1.05rem;color:var(--forest-lt);margin-bottom:8px;">Export Student Version</h3>
+      <p style="font-size:0.82rem;color:var(--ink-dim);margin-bottom:12px;">Download this simplified tool as a standalone HTML file you can share with students.</p>
+      <button class="btn btn-ember btn-small" onclick="exportStudentVersion()">Download Student HTML</button>
+    </div>
+  </div>
 </div>
 
 <!-- ============ CONCEPT MODAL ============ -->
@@ -914,6 +1302,10 @@ Help me explore what this offer could look like:
       <option value="fall">Fall</option>
       <option value="winter">Winter</option>
     </select>
+    <label style="display:inline-flex;align-items:center;gap:8px;margin-top:15px;text-transform:none;letter-spacing:0;font-family:var(--sans);font-size:0.88rem;color:var(--ink);">
+      <input type="checkbox" id="c-flame" style="width:auto;min-width:auto;appearance:auto;border:none;margin:0;">
+      &#128293; Priority Flame
+    </label>
     <div class="btn-row">
       <button class="btn btn-primary" onclick="saveConcept()">Save Concept</button>
       <button class="btn btn-secondary" onclick="closeModal('concept-modal')">Cancel</button>
@@ -949,9 +1341,56 @@ Help me explore what this offer could look like:
       <option value="drafted">Drafted</option>
       <option value="published">Published</option>
     </select>
+    <label style="display:inline-flex;align-items:center;gap:8px;margin-top:15px;text-transform:none;letter-spacing:0;font-family:var(--sans);font-size:0.88rem;color:var(--ink);">
+      <input type="checkbox" id="i-flame" style="width:auto;min-width:auto;appearance:auto;border:none;margin:0;">
+      &#128293; Priority Flame
+    </label>
     <div class="btn-row">
       <button class="btn btn-primary" onclick="saveIdea()">Save Idea</button>
       <button class="btn btn-secondary" onclick="closeModal('idea-modal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ STUDENT IDEA MODAL ============ -->
+<div class="modal-overlay" id="s-idea-modal">
+  <div class="modal">
+    <h3 id="s-idea-modal-title">New Idea</h3>
+    <input type="hidden" id="s-idea-edit-id">
+    <label>Idea Title</label>
+    <input type="text" id="si-title" placeholder="What do you want to create?">
+    <label>Description</label>
+    <textarea id="si-desc" placeholder="Details, notes, angles..." rows="3"></textarea>
+    <label>Content Type</label>
+    <select id="si-type">
+      <option value="blog">Blog Post</option>
+      <option value="social">Social Content</option>
+      <option value="email">Email</option>
+      <option value="training">Training / Workshop</option>
+      <option value="offer">New Offer</option>
+      <option value="other">Other</option>
+    </select>
+    <label style="display:inline-flex;align-items:center;gap:8px;margin-top:15px;text-transform:none;letter-spacing:0;font-family:var(--sans);font-size:0.88rem;color:var(--ink);">
+      <input type="checkbox" id="si-flame" style="width:auto;min-width:auto;appearance:auto;border:none;margin:0;">
+      &#128293; Priority Flame
+    </label>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="sSaveIdea()">Save Idea</button>
+      <button class="btn btn-secondary" onclick="closeModal('s-idea-modal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ REFINEMENT LOG MODAL ============ -->
+<div class="modal-overlay" id="refinement-modal">
+  <div class="modal">
+    <h3>Add Refinement Note</h3>
+    <input type="hidden" id="ref-fw-id">
+    <label>What changed or evolved?</label>
+    <textarea id="ref-note" placeholder="Describe how this framework was refined, expanded, or clarified..." rows="4"></textarea>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="saveRefinement()">Save Note</button>
+      <button class="btn btn-secondary" onclick="closeModal('refinement-modal')">Cancel</button>
     </div>
   </div>
 </div>
@@ -969,12 +1408,45 @@ Help me explore what this offer could look like:
   </div>
 </div>
 
+</div><!-- /content-wrap -->
+
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
 <script>
+// ============ BACKGROUND SCENE ============
+(function(){
+  const scene = document.getElementById('bg-scene');
+  const orbs = [
+    { w:300, h:300, top:'6%', left:'8%', color:'rgba(232,116,59,0.28)', dur:14, ox:'25px', oy:'-30px' },
+    { w:240, h:240, top:'60%', left:'82%', color:'rgba(198,149,92,0.22)', dur:18, ox:'-20px', oy:'20px' },
+    { w:260, h:260, top:'74%', left:'18%', color:'rgba(44,95,90,0.32)', dur:16, ox:'15px', oy:'-25px' },
+    { w:180, h:180, top:'18%', left:'62%', color:'rgba(155,124,139,0.2)', dur:20, ox:'-18px', oy:'22px' }
+  ];
+  orbs.forEach(o => {
+    const el = document.createElement('div');
+    el.className = 'orb';
+    el.style.cssText = `width:${o.w}px;height:${o.h}px;top:${o.top};left:${o.left};background:${o.color};animation-duration:${o.dur}s;--ox:${o.ox};--oy:${o.oy};`;
+    scene.appendChild(el);
+  });
+  if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    setInterval(() => {
+      const em = document.createElement('div');
+      em.className = 'rising-ember';
+      const size = 1.5 + Math.random() * 2;
+      const left = Math.random() * 100;
+      const dur = 7 + Math.random() * 6;
+      const drift = (Math.random() - 0.5) * 120;
+      em.style.cssText = `width:${size}px;height:${size}px;left:${left}%;bottom:-10px;animation-duration:${dur}s;--drift:${drift}px;`;
+      scene.appendChild(em);
+      setTimeout(() => em.remove(), dur * 1000);
+    }, 600);
+  }
+})();
+
 // ============ DATA ============
 const STORAGE_KEY = 'insight-forge-data';
+const STUDENT_KEY = 'insight-forge-student';
 
 const defaultData = {
   setup: {
@@ -990,32 +1462,52 @@ const defaultData = {
   weeklyChecklist: { weekOf: '', items: [false,false,false,false,false,false] }
 };
 
+const defaultStudentData = {
+  frameworks: [],
+  modalities: [],
+  sparkStatement: '',
+  ideas: []
+};
+
 let data = loadData();
+let studentData = loadStudentData();
 
 function loadData() {
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
       const parsed = JSON.parse(stored);
-      return { ...defaultData, ...parsed };
+      return { ...JSON.parse(JSON.stringify(defaultData)), ...parsed };
     }
   } catch(e) {}
   return JSON.parse(JSON.stringify(defaultData));
 }
 
-function saveData() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+function saveData() { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
+
+function loadStudentData() {
+  try {
+    const stored = localStorage.getItem(STUDENT_KEY);
+    if (stored) return { ...JSON.parse(JSON.stringify(defaultStudentData)), ...JSON.parse(stored) };
+  } catch(e) {}
+  return JSON.parse(JSON.stringify(defaultStudentData));
 }
 
-function genId() {
-  return Date.now().toString(36) + Math.random().toString(36).substr(2,5);
-}
+function saveStudentData() { localStorage.setItem(STUDENT_KEY, JSON.stringify(studentData)); }
+
+function genId() { return Date.now().toString(36) + Math.random().toString(36).substr(2,5); }
 
 function toast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg;
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+function esc(str) {
+  const d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
 }
 
 // ============ TABS ============
@@ -1028,6 +1520,7 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     if (btn.dataset.tab === 'concepts') renderConcepts();
     if (btn.dataset.tab === 'ideas') renderIdeas();
     if (btn.dataset.tab === 'practice') renderChecklists();
+    if (btn.dataset.tab === 'student') { sRenderFrameworks(); sRenderModalities(); sLoadSpark(); sRenderIdeas(); }
   });
 });
 
@@ -1036,7 +1529,7 @@ function addFramework() {
   const name = document.getElementById('fw-name').value.trim();
   const desc = document.getElementById('fw-desc').value.trim();
   if (!name) return toast('Enter a framework name');
-  data.setup.frameworks.push({ id: genId(), name, description: desc });
+  data.setup.frameworks.push({ id: genId(), name, description: desc, refinements: [] });
   document.getElementById('fw-name').value = '';
   document.getElementById('fw-desc').value = '';
   saveData();
@@ -1050,23 +1543,71 @@ function removeFramework(id) {
   renderFrameworks();
 }
 
+function openRefinementModal(fwId) {
+  document.getElementById('ref-fw-id').value = fwId;
+  document.getElementById('ref-note').value = '';
+  document.getElementById('refinement-modal').classList.add('active');
+}
+
+function saveRefinement() {
+  const fwId = document.getElementById('ref-fw-id').value;
+  const note = document.getElementById('ref-note').value.trim();
+  if (!note) return toast('Enter a refinement note');
+  const fw = data.setup.frameworks.find(f => f.id === fwId);
+  if (!fw) return;
+  if (!fw.refinements) fw.refinements = [];
+  fw.refinements.push({ id: genId(), note, date: new Date().toISOString().split('T')[0] });
+  saveData();
+  closeModal('refinement-modal');
+  renderFrameworks();
+  toast('Refinement logged');
+}
+
+function deleteRefinement(fwId, refId) {
+  const fw = data.setup.frameworks.find(f => f.id === fwId);
+  if (!fw || !fw.refinements) return;
+  fw.refinements = fw.refinements.filter(r => r.id !== refId);
+  saveData();
+  renderFrameworks();
+}
+
 function renderFrameworks() {
   const el = document.getElementById('frameworks-list');
   if (!data.setup.frameworks.length) {
     el.innerHTML = '<p style="font-size:0.82rem;color:var(--ink-dim);font-style:italic;">No frameworks added yet</p>';
     return;
   }
-  el.innerHTML = data.setup.frameworks.map(f => `
-    <div class="setup-item">
-      <div>
-        <div class="setup-item-name">${esc(f.name)}</div>
-        ${f.description ? `<div class="setup-item-desc">${esc(f.description)}</div>` : ''}
+  el.innerHTML = data.setup.frameworks.map(f => {
+    if (!f.refinements) f.refinements = [];
+    const refHtml = f.refinements.length ? `
+      <div class="refinement-log">
+        <div style="font-family:var(--mono);font-size:0.65rem;color:var(--forest-lt);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Refinement Log</div>
+        ${f.refinements.map(r => `
+          <div class="refinement-entry">
+            <span>${esc(r.note)}</span>
+            <span style="display:flex;align-items:center;gap:4px;">
+              <span class="refinement-date">${r.date}</span>
+              <button class="btn-ghost" onclick="deleteRefinement('${f.id}','${r.id}')" title="Remove" style="font-size:0.7rem;padding:2px 4px;">&#10005;</button>
+            </span>
+          </div>
+        `).join('')}
       </div>
-      <div class="setup-item-actions">
-        <button class="btn-ghost" onclick="removeFramework('${f.id}')" title="Remove">✕</button>
+    ` : '';
+    return `
+    <div class="setup-item" style="flex-direction:column;align-items:stretch;">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div>
+          <div class="setup-item-name">${esc(f.name)}</div>
+          ${f.description ? `<div class="setup-item-desc">${esc(f.description)}</div>` : ''}
+        </div>
+        <div class="setup-item-actions">
+          <button class="btn-ghost" onclick="openRefinementModal('${f.id}')" title="Add refinement note" style="font-size:0.72rem;color:var(--forest-lt);">+ V2</button>
+          <button class="btn-ghost" onclick="removeFramework('${f.id}')" title="Remove">&#10005;</button>
+        </div>
       </div>
-    </div>
-  `).join('');
+      ${refHtml}
+    </div>`;
+  }).join('');
 }
 
 function addModality() {
@@ -1101,7 +1642,7 @@ function renderModalities() {
         <span class="tag ${typeColors[m.type]}">${typeLabels[m.type]}</span>
       </div>
       <div class="setup-item-actions">
-        <button class="btn-ghost" onclick="removeModality('${m.id}')" title="Remove">✕</button>
+        <button class="btn-ghost" onclick="removeModality('${m.id}')" title="Remove">&#10005;</button>
       </div>
     </div>
   `).join('');
@@ -1131,16 +1672,14 @@ function generateNBLMInstructions() {
   if (s.frameworks.length) {
     text += 'MY CORE FRAMEWORKS\n\nRecognize and tag references to these when analyzing calls:\n\n';
     s.frameworks.forEach(f => {
-      text += `${f.name}${f.description ? ' — ' + f.description : ''}\n\n`;
+      text += `${f.name}${f.description ? ' \u2014 ' + f.description : ''}\n\n`;
     });
   }
 
   if (s.modalities.length) {
     text += 'MY MODALITIES\n\n';
     const types = { braided: 'Braided', sequenced: 'Sequenced', support: 'Support' };
-    s.modalities.forEach(m => {
-      text += `${m.name} (${types[m.type]})\n`;
-    });
+    s.modalities.forEach(m => { text += `${m.name} (${types[m.type]})\n`; });
     text += '\n';
   }
 
@@ -1148,21 +1687,23 @@ function generateNBLMInstructions() {
 
 When I ask you to analyze call transcripts or insight recordings, organize findings into these categories:
 
-1. QUESTIONS ASKED — Specific questions asked or problems brought up. Include who asked if identifiable, the core question, the underlying need, and which framework it connects to.
+1. QUESTIONS ASKED \u2014 Specific questions asked or problems brought up. Include who asked if identifiable, the core question, the underlying need, and which framework it connects to.
 
-2. PROBLEMS SURFACED — Struggles, frustrations, blocks, or challenges mentioned. What are people stuck on?
+2. PROBLEMS SURFACED \u2014 Struggles, frustrations, blocks, or challenges mentioned. What are people stuck on?
 
-3. IP GENERATED — Advice, frameworks, solutions, analogies, or processes taught or explained. Focus on spontaneous insights. Flag anything that could become a standalone training, blog post, or framework refinement.
+3. IP GENERATED \u2014 Advice, frameworks, solutions, analogies, or processes taught or explained. Focus on spontaneous insights. Flag anything that could become a standalone training, blog post, or framework refinement.
 
-4. PATTERNS — Themes across multiple questions or people. What does the community collectively need right now?
+4. PATTERNS \u2014 Themes across multiple questions or people. What does the community collectively need right now?
 
-5. CONTENT SEEDS — Based on questions and problems, what content could address these needs?
+5. CONTENT SEEDS \u2014 Based on questions and problems, what content could address these needs?
 
-6. OFFER INTELLIGENCE — Signals about what people would pay for, what support they need, or gaps in current offerings.
+6. OFFER INTELLIGENCE \u2014 Signals about what people would pay for, what support they need, or gaps in current offerings.
 
-7. WINS — Breakthroughs, progress, celebrations, or aha moments.
+7. WINS \u2014 Breakthroughs, progress, celebrations, or aha moments.
 
-8. FRAMEWORK REFINEMENTS — Moments where an existing framework was refined, expanded, or clarified.
+8. FRAMEWORK REFINEMENTS \u2014 Moments where an existing framework was refined, expanded, or clarified.
+
+9. AD INTELLIGENCE \u2014 Language patterns members use to describe their struggles, objection signals, competitor mentions, and positioning gaps.
 
 OUTPUT FORMAT
 
@@ -1182,14 +1723,15 @@ const dailyItems = [
   'Did my practice (tarot, coaching, breathwork, technique, etc.)',
   'Noticed and noted the key insight from today\'s practice',
   'Recorded a 5-10 minute Insight Loom unpacking the insight',
-  'Dropped the Loom link into NotebookLM'
+  'Pasted the Loom transcript into the Weekly Forge notebook'
 ];
 const weeklyItems = [
-  'Consolidated daily Insight Looms into one weekly Loom',
-  'Pulled transcripts from this week\'s calls',
-  'Loaded all sources into NotebookLM',
-  'Ran the extraction prompts (Questions, IP, Wins, Patterns)',
-  'Added new Concepts and Ideas to The Insight Forge',
+  'Pasted all Loom transcripts into the Weekly Forge notebook',
+  'Pulled and pasted transcripts from this week\'s calls',
+  'Ran the extraction prompts (Questions, IP, Wins, Looms, Gaps, Ad Intel)',
+  'Routed output: IP \u2192 Concepts, Seeds \u2192 Ideas, Refinements \u2192 Framework Logs',
+  'Saved framework refinements and ad intel to the Insights Vault notebook',
+  'Removed processed transcripts from the Weekly Forge notebook',
   'Reviewed Idea Pipeline and updated stages'
 ];
 
@@ -1199,9 +1741,17 @@ function renderChecklists() {
     data.dailyChecklist = { date: today, items: dailyItems.map(() => false) };
     saveData();
   }
+  if (data.dailyChecklist.items.length !== dailyItems.length) {
+    data.dailyChecklist.items = dailyItems.map((_, i) => data.dailyChecklist.items[i] || false);
+    saveData();
+  }
   const weekStart = getWeekStart();
   if (data.weeklyChecklist.weekOf !== weekStart) {
     data.weeklyChecklist = { weekOf: weekStart, items: weeklyItems.map(() => false) };
+    saveData();
+  }
+  if (data.weeklyChecklist.items.length !== weeklyItems.length) {
+    data.weeklyChecklist.items = weeklyItems.map((_, i) => data.weeklyChecklist.items[i] || false);
     saveData();
   }
 
@@ -1222,28 +1772,10 @@ function renderChecklists() {
   `).join('');
 }
 
-function toggleDaily(i) {
-  data.dailyChecklist.items[i] = !data.dailyChecklist.items[i];
-  saveData();
-  renderChecklists();
-}
-function toggleWeekly(i) {
-  data.weeklyChecklist.items[i] = !data.weeklyChecklist.items[i];
-  saveData();
-  renderChecklists();
-}
-function resetDaily() {
-  data.dailyChecklist.items = dailyItems.map(() => false);
-  saveData();
-  renderChecklists();
-  toast('Daily checklist reset');
-}
-function resetWeekly() {
-  data.weeklyChecklist.items = weeklyItems.map(() => false);
-  saveData();
-  renderChecklists();
-  toast('Weekly checklist reset');
-}
+function toggleDaily(i) { data.dailyChecklist.items[i] = !data.dailyChecklist.items[i]; saveData(); renderChecklists(); }
+function toggleWeekly(i) { data.weeklyChecklist.items[i] = !data.weeklyChecklist.items[i]; saveData(); renderChecklists(); }
+function resetDaily() { data.dailyChecklist.items = dailyItems.map(() => false); saveData(); renderChecklists(); toast('Daily checklist reset'); }
+function resetWeekly() { data.weeklyChecklist.items = weeklyItems.map(() => false); saveData(); renderChecklists(); toast('Weekly checklist reset'); }
 
 function getWeekStart() {
   const d = new Date();
@@ -1274,6 +1806,7 @@ function openConceptModal(id) {
     document.getElementById('c-story').value = c.personalStory || '';
     document.getElementById('c-readiness').value = c.readiness;
     document.getElementById('c-timing').value = c.timing;
+    document.getElementById('c-flame').checked = c.flame || false;
   } else {
     title.textContent = 'New Concept';
     document.getElementById('concept-edit-id').value = '';
@@ -1284,6 +1817,7 @@ function openConceptModal(id) {
     document.getElementById('c-story').value = '';
     document.getElementById('c-readiness').value = 'percolating';
     document.getElementById('c-timing').value = 'evergreen';
+    document.getElementById('c-flame').checked = false;
   }
   modal.classList.add('active');
 }
@@ -1300,7 +1834,8 @@ function saveConcept() {
     frameworkId: document.getElementById('c-framework').value,
     personalStory: document.getElementById('c-story').value.trim(),
     readiness: document.getElementById('c-readiness').value,
-    timing: document.getElementById('c-timing').value
+    timing: document.getElementById('c-timing').value,
+    flame: document.getElementById('c-flame').checked
   };
 
   if (editId) {
@@ -1314,6 +1849,11 @@ function saveConcept() {
   closeModal('concept-modal');
   renderConcepts();
   toast(editId ? 'Concept updated' : 'Concept added');
+}
+
+function toggleConceptFlame(id) {
+  const c = data.concepts.find(x => x.id === id);
+  if (c) { c.flame = !c.flame; saveData(); renderConcepts(); }
 }
 
 function deleteConcept(id) {
@@ -1330,6 +1870,7 @@ function renderConcepts() {
   const sourceFilter = document.getElementById('concept-filter-source').value;
   const readinessFilter = document.getElementById('concept-filter-readiness').value;
   const fwFilter = document.getElementById('concept-filter-framework').value;
+  const flameOnly = document.getElementById('concept-filter-flame').checked;
   
   populateFrameworkSelect('concept-filter-framework', true, fwFilter);
 
@@ -1338,6 +1879,7 @@ function renderConcepts() {
     if (sourceFilter && c.source !== sourceFilter) return false;
     if (readinessFilter && c.readiness !== readinessFilter) return false;
     if (fwFilter && c.frameworkId !== fwFilter) return false;
+    if (flameOnly && !c.flame) return false;
     return true;
   });
 
@@ -1360,7 +1902,10 @@ function renderConcepts() {
     <div class="item-card">
       <div class="item-card-header">
         <div>
-          <div class="item-card-title">${esc(c.title)}</div>
+          <div class="item-card-title">
+            <span class="flame-flag ${c.flame ? 'lit' : ''}" onclick="toggleConceptFlame('${c.id}')" title="Toggle priority">&#128293;</span>
+            ${esc(c.title)}
+          </div>
           <div class="item-card-meta">
             <span class="tag ${sourceColors[c.source]}">${sourceLabels[c.source]}</span>
             <span class="tag ${readinessColors[c.readiness]}">${readinessLabels[c.readiness]}</span>
@@ -1397,6 +1942,7 @@ function openIdeaModal(id, presetConceptId) {
     document.getElementById('i-concept').value = idea.conceptId || '';
     document.getElementById('i-type').value = idea.contentType;
     document.getElementById('i-stage').value = idea.stage;
+    document.getElementById('i-flame').checked = idea.flame || false;
   } else {
     title.textContent = 'New Idea';
     document.getElementById('idea-edit-id').value = '';
@@ -1405,6 +1951,7 @@ function openIdeaModal(id, presetConceptId) {
     document.getElementById('i-concept').value = presetConceptId || '';
     document.getElementById('i-type').value = 'blog';
     document.getElementById('i-stage').value = 'not-started';
+    document.getElementById('i-flame').checked = false;
   }
   modal.classList.add('active');
 }
@@ -1419,7 +1966,8 @@ function saveIdea() {
     description: document.getElementById('i-desc').value.trim(),
     conceptId: document.getElementById('i-concept').value,
     contentType: document.getElementById('i-type').value,
-    stage: document.getElementById('i-stage').value
+    stage: document.getElementById('i-stage').value,
+    flame: document.getElementById('i-flame').checked
   };
 
   if (editId) {
@@ -1439,6 +1987,11 @@ function saveIdea() {
   closeModal('idea-modal');
   renderIdeas();
   toast(editId ? 'Idea updated' : 'Idea added');
+}
+
+function toggleIdeaFlame(id) {
+  const idea = data.ideas.find(i => i.id === id);
+  if (idea) { idea.flame = !idea.flame; saveData(); renderIdeas(); }
 }
 
 function archiveIdea(id) {
@@ -1479,6 +2032,7 @@ function renderIdeas() {
   const typeFilter = document.getElementById('idea-filter-type').value;
   const stageFilter = document.getElementById('idea-filter-stage').value;
   const showArchived = document.getElementById('idea-show-archived').checked;
+  const flameOnly = document.getElementById('idea-filter-flame').checked;
 
   populateConceptSelect('idea-filter-concept', true, conceptFilter);
 
@@ -1488,6 +2042,7 @@ function renderIdeas() {
     if (conceptFilter && i.conceptId !== conceptFilter) return false;
     if (typeFilter && i.contentType !== typeFilter) return false;
     if (stageFilter && i.stage !== stageFilter) return false;
+    if (flameOnly && !i.flame) return false;
     return true;
   });
 
@@ -1509,18 +2064,21 @@ function renderIdeas() {
     <div class="item-card" style="${i.archived ? 'opacity:0.5;' : ''}">
       <div class="item-card-header">
         <div>
-          <div class="item-card-title">${esc(i.title)}</div>
+          <div class="item-card-title">
+            <span class="flame-flag ${i.flame ? 'lit' : ''}" onclick="toggleIdeaFlame('${i.id}')" title="Toggle priority">&#128293;</span>
+            ${esc(i.title)}
+          </div>
           <div class="item-card-meta">
             <span class="tag tag-copper">${typeLabels[i.contentType]}</span>
             <span class="pipeline-stage stage-${i.stage}"><span class="stage-dot"></span> ${stageLabels[i.stage]}</span>
-            ${concept ? `<span style="font-size:0.72rem;color:var(--ink-dim);">← ${esc(concept.title)}</span>` : ''}
+            ${concept ? `<span style="font-size:0.72rem;color:var(--ink-dim);">\u2190 ${esc(concept.title)}</span>` : ''}
           </div>
         </div>
       </div>
       ${i.description ? `<div class="item-card-desc">${esc(i.description)}</div>` : ''}
       <div class="item-card-actions">
         <button class="btn btn-secondary btn-small" onclick="openIdeaModal('${i.id}')">Edit</button>
-        ${canAdvance && !i.archived ? `<button class="btn btn-primary btn-small" onclick="advanceStage('${i.id}')">Advance →</button>` : ''}
+        ${canAdvance && !i.archived ? `<button class="btn btn-primary btn-small" onclick="advanceStage('${i.id}')">Advance \u2192</button>` : ''}
         <button class="btn btn-secondary btn-small" onclick="archiveIdea('${i.id}')">${i.archived ? 'Restore' : 'Archive'}</button>
         <button class="btn btn-danger btn-small" onclick="deleteIdea('${i.id}')">Delete</button>
       </div>
@@ -1528,9 +2086,303 @@ function renderIdeas() {
   }).join('');
 }
 
+// ============ STUDENT VERSION ============
+function sAddFramework() {
+  const name = document.getElementById('s-fw-name').value.trim();
+  const desc = document.getElementById('s-fw-desc').value.trim();
+  if (!name) return toast('Enter a framework name');
+  studentData.frameworks.push({ id: genId(), name, description: desc });
+  document.getElementById('s-fw-name').value = '';
+  document.getElementById('s-fw-desc').value = '';
+  saveStudentData();
+  sRenderFrameworks();
+  toast('Framework added');
+}
+
+function sRemoveFramework(id) {
+  studentData.frameworks = studentData.frameworks.filter(f => f.id !== id);
+  saveStudentData();
+  sRenderFrameworks();
+}
+
+function sRenderFrameworks() {
+  const el = document.getElementById('s-frameworks-list');
+  if (!studentData.frameworks.length) {
+    el.innerHTML = '<p style="font-size:0.82rem;color:var(--ink-dim);font-style:italic;">No frameworks added yet</p>';
+    return;
+  }
+  el.innerHTML = studentData.frameworks.map(f => `
+    <div class="setup-item">
+      <div>
+        <div class="setup-item-name">${esc(f.name)}</div>
+        ${f.description ? `<div class="setup-item-desc">${esc(f.description)}</div>` : ''}
+      </div>
+      <div class="setup-item-actions">
+        <button class="btn-ghost" onclick="sRemoveFramework('${f.id}')" title="Remove">&#10005;</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function sAddModality() {
+  const name = document.getElementById('s-mod-name').value.trim();
+  const type = document.getElementById('s-mod-type').value;
+  if (!name) return toast('Enter a modality name');
+  studentData.modalities.push({ id: genId(), name, type });
+  document.getElementById('s-mod-name').value = '';
+  saveStudentData();
+  sRenderModalities();
+  toast('Modality added');
+}
+
+function sRemoveModality(id) {
+  studentData.modalities = studentData.modalities.filter(m => m.id !== id);
+  saveStudentData();
+  sRenderModalities();
+}
+
+function sRenderModalities() {
+  const el = document.getElementById('s-modalities-list');
+  if (!studentData.modalities.length) {
+    el.innerHTML = '<p style="font-size:0.82rem;color:var(--ink-dim);font-style:italic;">No modalities added yet</p>';
+    return;
+  }
+  const typeLabels = { braided: 'Braided', sequenced: 'Sequenced', support: 'Support' };
+  const typeColors = { braided: 'tag-ember', sequenced: 'tag-forest', support: 'tag-mauve' };
+  el.innerHTML = studentData.modalities.map(m => `
+    <div class="setup-item">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span class="setup-item-name">${esc(m.name)}</span>
+        <span class="tag ${typeColors[m.type]}">${typeLabels[m.type]}</span>
+      </div>
+      <div class="setup-item-actions">
+        <button class="btn-ghost" onclick="sRemoveModality('${m.id}')" title="Remove">&#10005;</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function sSaveSetup() {
+  studentData.sparkStatement = document.getElementById('s-spark').value;
+  saveStudentData();
+}
+
+function sLoadSpark() {
+  document.getElementById('s-spark').value = studentData.sparkStatement || '';
+}
+
+function sOpenIdeaModal(id) {
+  const modal = document.getElementById('s-idea-modal');
+  const title = document.getElementById('s-idea-modal-title');
+  if (id) {
+    const idea = studentData.ideas.find(x => x.id === id);
+    if (!idea) return;
+    title.textContent = 'Edit Idea';
+    document.getElementById('s-idea-edit-id').value = id;
+    document.getElementById('si-title').value = idea.title;
+    document.getElementById('si-desc').value = idea.description || '';
+    document.getElementById('si-type').value = idea.contentType;
+    document.getElementById('si-flame').checked = idea.flame || false;
+  } else {
+    title.textContent = 'New Idea';
+    document.getElementById('s-idea-edit-id').value = '';
+    document.getElementById('si-title').value = '';
+    document.getElementById('si-desc').value = '';
+    document.getElementById('si-type').value = 'blog';
+    document.getElementById('si-flame').checked = false;
+  }
+  modal.classList.add('active');
+}
+
+function sSaveIdea() {
+  const title = document.getElementById('si-title').value.trim();
+  if (!title) return toast('Enter an idea title');
+  const editId = document.getElementById('s-idea-edit-id').value;
+  const ideaData = {
+    title,
+    description: document.getElementById('si-desc').value.trim(),
+    contentType: document.getElementById('si-type').value,
+    flame: document.getElementById('si-flame').checked
+  };
+  if (editId) {
+    const idx = studentData.ideas.findIndex(i => i.id === editId);
+    if (idx >= 0) studentData.ideas[idx] = { ...studentData.ideas[idx], ...ideaData };
+  } else {
+    studentData.ideas.unshift({ id: genId(), ...ideaData, dateAdded: new Date().toISOString() });
+  }
+  saveStudentData();
+  closeModal('s-idea-modal');
+  sRenderIdeas();
+  toast(editId ? 'Idea updated' : 'Idea added');
+}
+
+function sToggleFlame(id) {
+  const idea = studentData.ideas.find(i => i.id === id);
+  if (idea) { idea.flame = !idea.flame; saveStudentData(); sRenderIdeas(); }
+}
+
+function sDeleteIdea(id) {
+  if (!confirm('Delete this idea?')) return;
+  studentData.ideas = studentData.ideas.filter(i => i.id !== id);
+  saveStudentData();
+  sRenderIdeas();
+  toast('Idea deleted');
+}
+
+function sRenderIdeas() {
+  const search = (document.getElementById('s-idea-search')?.value || '').toLowerCase();
+  const typeFilter = document.getElementById('s-idea-filter-type')?.value || '';
+  const flameOnly = document.getElementById('s-idea-filter-flame')?.checked || false;
+
+  let filtered = studentData.ideas.filter(i => {
+    if (search && !i.title.toLowerCase().includes(search) && !(i.description || '').toLowerCase().includes(search)) return false;
+    if (typeFilter && i.contentType !== typeFilter) return false;
+    if (flameOnly && !i.flame) return false;
+    return true;
+  });
+
+  const list = document.getElementById('s-ideas-list');
+  if (!filtered.length) {
+    list.innerHTML = `<div class="empty-state"><p>${studentData.ideas.length ? 'No ideas match your filters.' : 'No ideas yet. Start capturing what you want to create.'}</p>
+    ${!studentData.ideas.length ? '<button class="btn btn-primary" onclick="sOpenIdeaModal()">+ Add Your First Idea</button>' : ''}</div>`;
+    return;
+  }
+
+  const typeLabels = { blog: 'Blog', social: 'Social', email: 'Email', training: 'Training', offer: 'Offer', other: 'Other' };
+
+  list.innerHTML = filtered.map(i => `
+    <div class="item-card">
+      <div class="item-card-header">
+        <div>
+          <div class="item-card-title">
+            <span class="flame-flag ${i.flame ? 'lit' : ''}" onclick="sToggleFlame('${i.id}')" title="Toggle priority">&#128293;</span>
+            ${esc(i.title)}
+          </div>
+          <div class="item-card-meta">
+            <span class="tag tag-copper">${typeLabels[i.contentType] || 'Other'}</span>
+          </div>
+        </div>
+      </div>
+      ${i.description ? `<div class="item-card-desc">${esc(i.description)}</div>` : ''}
+      <div class="item-card-actions">
+        <button class="btn btn-secondary btn-small" onclick="sOpenIdeaModal('${i.id}')">Edit</button>
+        <button class="btn btn-danger btn-small" onclick="sDeleteIdea('${i.id}')">Delete</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function exportStudentVersion() {
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Insight Forge</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Hanken+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0d1411;--bg2:#101a16;--surface:rgba(22,34,28,.72);--surface-2:rgba(241,231,214,.045);--ink:#F1E7D6;--ink-dim:#BDB09A;--ink-faint:#8C8270;--copper:#C6955C;--copper-lt:#E2B884;--copper-dk:#9A6F3E;--ember:#E8743B;--ember-glow:#FF8A4C;--forest:#2C5F5A;--forest-lt:#4FA89B;--mauve:#9B7C8B;--mauve-lt:#C0A2B0;--gold:#D8B968;--line:rgba(198,149,92,.20);--line-2:rgba(241,231,214,.10);--serif:'Cormorant Garamond',Georgia,serif;--sans:'Hanken Grotesk',system-ui,sans-serif;--mono:'JetBrains Mono',monospace;--shadow:0 10px 36px rgba(0,0,0,.45)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14px;line-height:1.6;min-height:100vh;-webkit-font-smoothing:antialiased}
+.wrap{max-width:800px;margin:0 auto;padding:20px}
+h1{font-family:var(--serif);font-size:2rem;font-weight:700;background:linear-gradient(100deg,var(--copper-lt),var(--ember-glow),var(--gold),var(--copper));background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-align:center;margin-bottom:4px;animation:sh 8s ease-in-out infinite alternate}
+@keyframes sh{0%{background-position:0% 50%}100%{background-position:100% 50%}}
+.sub{text-align:center;font-family:var(--mono);font-size:.72rem;color:var(--ink-dim);letter-spacing:.15em;text-transform:uppercase;margin-bottom:24px}
+.tabs{display:flex;justify-content:center;gap:6px;margin-bottom:20px;flex-wrap:wrap}
+.tab{padding:8px 16px;background:var(--surface-2);border:1px solid var(--line-2);border-radius:30px;font-size:.8rem;font-weight:600;font-family:var(--sans);color:var(--ink-dim);cursor:pointer}
+.tab.active{background:linear-gradient(135deg,var(--copper-dk),var(--copper));color:#1a120a;border-color:transparent;font-weight:700}
+.panel{display:none}.panel.active{display:block}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:24px;margin-bottom:15px;position:relative;overflow:hidden;box-shadow:var(--shadow)}
+.card::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:linear-gradient(180deg,var(--copper),var(--ember),var(--gold))}
+h3{font-family:var(--serif);font-size:1.15rem;color:var(--copper-lt);margin-bottom:8px}
+label{display:block;font-family:var(--mono);font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:2px;color:var(--copper);margin:15px 0 7px}
+label:first-child{margin-top:0}
+input[type=text],textarea,select{width:100%;background:var(--surface-2);border:1px solid var(--line-2);border-radius:11px;color:var(--ink);font-family:var(--sans);font-size:.92rem;padding:11px 14px;outline:none}
+input:focus,textarea:focus,select:focus{border-color:var(--copper)}
+textarea{resize:vertical;min-height:80px}
+select option{background:var(--bg2);color:var(--ink)}
+.btn{display:inline-flex;align-items:center;gap:6px;font-family:var(--sans);font-size:.82rem;font-weight:700;padding:10px 20px;border-radius:30px;border:none;cursor:pointer}
+.btn-p{background:linear-gradient(135deg,var(--copper),var(--copper-dk));color:#1a120a}
+.btn-s{background:transparent;border:1px solid var(--line);color:var(--ink-dim)}
+.btn-d{background:transparent;border:1px solid #a84232;color:#a84232}
+.btn-sm{font-size:.76rem;padding:7px 15px}
+.btn-g{background:none;border:none;color:var(--ink-dim);padding:4px 8px;font-size:.8rem;cursor:pointer}
+.tag{display:inline-block;font-family:var(--mono);font-size:.62rem;font-weight:600;text-transform:uppercase;letter-spacing:1px;padding:3px 9px;border-radius:20px;border:1px solid}
+.tag-e{border-color:var(--ember);color:var(--ember-glow);background:rgba(232,116,59,.14)}
+.tag-f{border-color:var(--forest);color:var(--forest-lt);background:rgba(44,95,90,.13)}
+.tag-m{border-color:var(--mauve);color:var(--mauve-lt);background:rgba(155,124,139,.14)}
+.tag-c{border-color:var(--copper);color:var(--copper-lt);background:rgba(198,149,92,.12)}
+.flame{display:inline-flex;font-size:1rem;cursor:pointer;filter:grayscale(.8) opacity(.4);user-select:none}
+.flame.lit{filter:none}
+.si{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--surface-2);border:1px solid var(--line-2);border-radius:11px;margin-bottom:6px}
+.ic{background:var(--surface);border:1px solid var(--line);border-radius:0 16px 16px 0;padding:18px 20px;margin-bottom:10px;position:relative;overflow:hidden;box-shadow:var(--shadow)}
+.ic::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:linear-gradient(180deg,var(--copper),var(--ember),var(--gold))}
+.row{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}
+.fb{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
+.fb select,.fb input[type=text]{width:auto;min-width:140px;font-size:.82rem;padding:8px 12px}
+.fb input[type=text]{flex:1;min-width:160px}
+.empty{text-align:center;padding:48px 20px;color:var(--ink-dim)}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(8,13,11,.78);z-index:3000;align-items:center;justify-content:center;padding:20px}
+.modal-bg.active{display:flex}
+.mdl{background:rgba(15,23,19,.96);border:1px solid var(--line);border-radius:16px;padding:30px;width:100%;max-width:560px;max-height:88vh;overflow-y:auto}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:rgba(15,23,19,.96);border:1px solid var(--copper);color:var(--copper-lt);padding:11px 22px;border-radius:30px;font-size:.85rem;font-weight:600;z-index:4000;opacity:0;transition:all .3s}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+@media(max-width:600px){h1{font-size:1.5rem}.card{padding:18px}.fb{flex-direction:column}.fb select,.fb input[type=text]{width:100%}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>My Insight Forge</h1>
+<p class="sub">Distill your practice into IP</p>
+<div class="tabs">
+<button class="tab active" data-t="setup">Setup</button>
+<button class="tab" data-t="ideas">Ideas</button>
+</div>
+<div class="panel active" id="p-setup">
+<div class="card"><h3>Your Frameworks</h3><p style="font-size:.82rem;color:var(--ink-dim);margin-bottom:12px">The named systems, models, or processes you teach or are developing.</p><div id="fw-list"></div><div style="margin-top:12px"><label>Framework Name</label><input type="text" id="fw-n" placeholder="e.g., My Healing Protocol"><label>Brief Description</label><input type="text" id="fw-d" placeholder="e.g., Three-step energy clearing process"><div class="row"><button class="btn btn-p btn-sm" onclick="aFw()">Add Framework</button></div></div></div>
+<div class="card"><h3>Your Modalities</h3><p style="font-size:.82rem;color:var(--ink-dim);margin-bottom:12px">The skills, tools, or disciplines you weave into your work.</p><div id="md-list"></div><div style="margin-top:12px"><label>Modality Name</label><input type="text" id="md-n" placeholder="e.g., Breathwork"><label>Type</label><select id="md-t"><option value="braided">Braided</option><option value="sequenced">Sequenced</option><option value="support">Support</option></select><div class="row"><button class="btn btn-p btn-sm" onclick="aMd()">Add Modality</button></div></div></div>
+<div class="card"><h3>Spark Statement</h3><p style="font-size:.82rem;color:var(--ink-dim);margin-bottom:12px">Your positioning statement: what you do, who you serve, how your method works.</p><textarea id="spark" placeholder="Write your Spark Statement here..." rows="3" oninput="sS()"></textarea></div>
+</div>
+<div class="panel" id="p-ideas">
+<h3 style="margin-bottom:16px">Idea Capture</h3>
+<div class="fb"><input type="text" id="is" placeholder="Search ideas..." oninput="rI()"><select id="it" onchange="rI()"><option value="">All Types</option><option value="blog">Blog</option><option value="social">Social</option><option value="email">Email</option><option value="training">Training</option><option value="offer">Offer</option><option value="other">Other</option></select><label style="display:inline-flex;align-items:center;gap:6px;margin:0;font-size:.78rem;color:var(--ember-glow);text-transform:none;letter-spacing:0"><input type="checkbox" id="ifl" onchange="rI()" style="width:auto;min-width:auto;appearance:auto;border:none;margin:0">&#128293; Only</label><button class="btn btn-p btn-sm" onclick="oIM()">+ New Idea</button></div>
+<div id="il"></div>
+</div>
+</div>
+<div class="modal-bg" id="im"><div class="mdl"><h3 id="imt">New Idea</h3><input type="hidden" id="iei"><label>Idea Title</label><input type="text" id="iit" placeholder="What do you want to create?"><label>Description</label><textarea id="iid" placeholder="Details, notes, angles..." rows="3"></textarea><label>Content Type</label><select id="iiy"><option value="blog">Blog Post</option><option value="social">Social Content</option><option value="email">Email</option><option value="training">Training / Workshop</option><option value="offer">New Offer</option><option value="other">Other</option></select><label style="display:inline-flex;align-items:center;gap:8px;margin-top:15px;text-transform:none;letter-spacing:0;font-family:var(--sans);font-size:.88rem;color:var(--ink)"><input type="checkbox" id="iif" style="width:auto;min-width:auto;appearance:auto;border:none;margin:0">&#128293; Priority Flame</label><div class="row"><button class="btn btn-p" onclick="sI()">Save Idea</button><button class="btn btn-s" onclick="cM()">Cancel</button></div></div></div>
+<div class="toast" id="tt"></div>
+<script>
+var K='my-insight-forge',D=l();function l(){try{var s=localStorage.getItem(K);if(s)return{...{frameworks:[],modalities:[],sparkStatement:'',ideas:[]},...JSON.parse(s)}}catch(e){}return{frameworks:[],modalities:[],sparkStatement:'',ideas:[]}}function sv(){localStorage.setItem(K,JSON.stringify(D))}function gid(){return Date.now().toString(36)+Math.random().toString(36).substr(2,5)}function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML}function t(m){var e=document.getElementById('tt');e.textContent=m;e.classList.add('show');setTimeout(function(){e.classList.remove('show')},2000)}
+document.querySelectorAll('.tab').forEach(function(b){b.addEventListener('click',function(){document.querySelectorAll('.tab').forEach(function(x){x.classList.remove('active')});document.querySelectorAll('.panel').forEach(function(x){x.classList.remove('active')});b.classList.add('active');document.getElementById('p-'+b.dataset.t).classList.add('active');if(b.dataset.t==='ideas')rI()})});
+function aFw(){var n=document.getElementById('fw-n').value.trim(),d=document.getElementById('fw-d').value.trim();if(!n)return t('Enter a name');D.frameworks.push({id:gid(),name:n,description:d});document.getElementById('fw-n').value='';document.getElementById('fw-d').value='';sv();rFw();t('Added')}function rFwx(id){D.frameworks=D.frameworks.filter(function(f){return f.id!==id});sv();rFw()}function rFw(){var e=document.getElementById('fw-list');if(!D.frameworks.length){e.innerHTML='<p style="font-size:.82rem;color:var(--ink-dim);font-style:italic">No frameworks yet</p>';return}e.innerHTML=D.frameworks.map(function(f){return'<div class="si"><div><div style="font-weight:500;font-size:.9rem">'+esc(f.name)+'</div>'+(f.description?'<div style="font-size:.78rem;color:var(--ink-dim);margin-top:2px">'+esc(f.description)+'</div>':'')+'</div><button class="btn-g" onclick="rFwx(\\''+f.id+'\\')">&#10005;</button></div>'}).join('')}
+function aMd(){var n=document.getElementById('md-n').value.trim(),tp=document.getElementById('md-t').value;if(!n)return t('Enter a name');D.modalities.push({id:gid(),name:n,type:tp});document.getElementById('md-n').value='';sv();rMd();t('Added')}function rMdx(id){D.modalities=D.modalities.filter(function(m){return m.id!==id});sv();rMd()}function rMd(){var e=document.getElementById('md-list'),tl={braided:'Braided',sequenced:'Sequenced',support:'Support'},tc={braided:'tag-e',sequenced:'tag-f',support:'tag-m'};if(!D.modalities.length){e.innerHTML='<p style="font-size:.82rem;color:var(--ink-dim);font-style:italic">No modalities yet</p>';return}e.innerHTML=D.modalities.map(function(m){return'<div class="si"><div style="display:flex;align-items:center;gap:10px"><span style="font-weight:500;font-size:.9rem">'+esc(m.name)+'</span><span class="tag '+tc[m.type]+'">'+tl[m.type]+'</span></div><button class="btn-g" onclick="rMdx(\\''+m.id+'\\')">&#10005;</button></div>'}).join('')}
+function sS(){D.sparkStatement=document.getElementById('spark').value;sv()}
+function oIM(id){var m=document.getElementById('im'),tl=document.getElementById('imt');if(id){var i=D.ideas.find(function(x){return x.id===id});if(!i)return;tl.textContent='Edit Idea';document.getElementById('iei').value=id;document.getElementById('iit').value=i.title;document.getElementById('iid').value=i.description||'';document.getElementById('iiy').value=i.contentType;document.getElementById('iif').checked=i.flame||false}else{tl.textContent='New Idea';document.getElementById('iei').value='';document.getElementById('iit').value='';document.getElementById('iid').value='';document.getElementById('iiy').value='blog';document.getElementById('iif').checked=false}m.classList.add('active')}
+function sI(){var tl=document.getElementById('iit').value.trim();if(!tl)return t('Enter a title');var eid=document.getElementById('iei').value,d={title:tl,description:document.getElementById('iid').value.trim(),contentType:document.getElementById('iiy').value,flame:document.getElementById('iif').checked};if(eid){var idx=D.ideas.findIndex(function(i){return i.id===eid});if(idx>=0)D.ideas[idx]={...D.ideas[idx],...d}}else{D.ideas.unshift({id:gid(),...d,dateAdded:new Date().toISOString()})}sv();cM();rI();t(eid?'Updated':'Added')}
+function tF(id){var i=D.ideas.find(function(x){return x.id===id});if(i){i.flame=!i.flame;sv();rI()}}
+function dI(id){if(!confirm('Delete?'))return;D.ideas=D.ideas.filter(function(i){return i.id!==id});sv();rI();t('Deleted')}
+function cM(){document.getElementById('im').classList.remove('active')}
+document.getElementById('im').addEventListener('click',function(e){if(e.target===document.getElementById('im'))cM()});
+function rI(){var s=(document.getElementById('is')||{}).value||'',tf=(document.getElementById('it')||{}).value||'',fl=(document.getElementById('ifl')||{}).checked||false;s=s.toLowerCase();var f=D.ideas.filter(function(i){if(s&&i.title.toLowerCase().indexOf(s)===-1&&(i.description||'').toLowerCase().indexOf(s)===-1)return false;if(tf&&i.contentType!==tf)return false;if(fl&&!i.flame)return false;return true});var el=document.getElementById('il'),tl={blog:'Blog',social:'Social',email:'Email',training:'Training',offer:'Offer',other:'Other'};if(!f.length){el.innerHTML='<div class="empty"><p>'+(D.ideas.length?'No ideas match.':'No ideas yet.')+'</p>'+(D.ideas.length?'':'<button class="btn btn-p" onclick="oIM()">+ Add Idea</button>')+'</div>';return}el.innerHTML=f.map(function(i){return'<div class="ic"><div style="display:flex;justify-content:space-between;align-items:flex-start"><div><div style="font-family:var(--serif);font-size:1.1rem;font-weight:600"><span class="flame '+(i.flame?'lit':'')+'" onclick="tF(\\''+i.id+'\\')">&#128293;</span> '+esc(i.title)+'</div><div style="margin-top:8px"><span class="tag tag-c">'+tl[i.contentType]+'</span></div></div></div>'+(i.description?'<div style="font-size:.85rem;color:var(--ink-dim);margin-top:8px">'+esc(i.description)+'</div>':'')+'<div class="row"><button class="btn btn-s btn-sm" onclick="oIM(\\''+i.id+'\\')">Edit</button><button class="btn btn-d btn-sm" onclick="dI(\\''+i.id+'\\')">Delete</button></div></div>'}).join('')}
+rFw();rMd();document.getElementById('spark').value=D.sparkStatement||'';rI();
+<\\/script>
+</body>
+</html>`;
+
+  const blob = new Blob([html.replace('<\\/script>', '<\/script>')], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'student-insight-forge.html';
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('Student version downloaded');
+}
+
 // ============ HELPERS ============
 function populateFrameworkSelect(selectId, includeAll, currentVal) {
   const sel = document.getElementById(selectId);
+  if (!sel) return;
   const val = currentVal !== undefined ? currentVal : sel.value;
   let html = includeAll ? '<option value="">All Frameworks</option>' : '';
   data.setup.frameworks.forEach(f => {
@@ -1541,6 +2393,7 @@ function populateFrameworkSelect(selectId, includeAll, currentVal) {
 
 function populateConceptSelect(selectId, includeAll, currentVal) {
   const sel = document.getElementById(selectId);
+  if (!sel) return;
   const val = currentVal !== undefined ? currentVal : sel.value;
   let html = includeAll ? '<option value="">All Concepts</option>' : '<option value="">No parent concept</option>';
   data.concepts.forEach(c => {
@@ -1558,14 +2411,8 @@ function copyPrompt(btn) {
   const text = block.querySelector('.prompt-text').textContent;
   navigator.clipboard.writeText(text).then(() => {
     btn.textContent = 'Copied';
-    setTimeout(() => btn.textContent = 'Copy', 1500);
+    setTimeout(() => { btn.textContent = 'Copy'; }, 1500);
   });
-}
-
-function esc(str) {
-  const d = document.createElement('div');
-  d.textContent = str;
-  return d.innerHTML;
 }
 
 // Close modals on overlay click
